@@ -71,7 +71,7 @@
                 "product10": {
                     "brand": "Great Value",
                     "price": 1.97,
-                    "type": "Beef",
+                    "type": "Ground Turkey",
                     "unit": "oz",
                     "unitQuantity": 20
                 },
@@ -206,7 +206,7 @@
                 },
                 "product13": {
                     "brand": "Ritz",
-                    "price": 3.79,
+                    "price": 0.79,
                     "type": "Cheese Crackers",
                     "unit": "Box",
                     "unitQuantity": 11.5
@@ -237,7 +237,7 @@
             "Products": {
                 "product1": {
                     "brand": "Gala",
-                    "price": 0.75,
+                    "price": 0.50,
                     "type": "Apple",
                     "unit": "Each",
                     "unitQuantity": 1

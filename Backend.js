@@ -39,7 +39,7 @@ const grocerylist = {
         unit: null,
     },
     2: {
-        name: "Mixed nuts",
+        name: "Mixed Nuts",
         quantity: 1,
         unit: "Bag"
     },
@@ -80,10 +80,13 @@ const grocerylist = {
 4. Append Grocery Object to have searched for prices
 */
 
-
+// Recursion?????
 function getCheapestPrice(object, baseline) {
-    const localobj = object;
     const maxStores = 5;
+    const localobj = object;
+    const hitlist = Object.keys(firestoreStructure.GroceryStores);
+    hitlist.splice(hitlist.indexOf(baseline), 1);
+    console.log(hitlist);
     for (key in grocerylist) {
         for (x in firestoreStructure.GroceryStores[baseline].Products) {
             if (localobj[key].name == firestoreStructure.GroceryStores[baseline].Products[x].type) {
@@ -91,21 +94,23 @@ function getCheapestPrice(object, baseline) {
                 localobj[key].groceryStore = baseline;
             }
         };
+        for (GS in hitlist) {
+            for (y in firestoreStructure.GroceryStores[hitlist[GS]].Products) {
+                if (localobj[key].name == firestoreStructure.GroceryStores[hitlist[GS]].Products[y].type) {
+                    if (localobj[key].price > firestoreStructure.GroceryStores[hitlist[GS]].Products[y].price) {
+                        localobj[key].price = firestoreStructure.GroceryStores[hitlist[GS]].Products[y].price;
+                        localobj[key].groceryStore = hitlist[GS];
+                    }
+                }
+            };
+        };
     };
+    
     /*
     - Compare updated localobj prices to another store reference in .json
     - 
     */
-   const hitlist = Object.keys(firestoreStructure.GroceryStores);
-   hitlist.splice(hitlist.indexOf('Aldis'), 1);
-   console.log(hitlist)
-   for (y in firestoreStructure.GroceryStores[x].Products) {
-    if (localobj[key].name == firestoreStructure.GroceryStores[baseline].Products[x].type) {
-        if (localobj[key].price > firestoreStructure.GroceryStores[baseline].Products[x].price) {
-            localobj[key].price = firestoreStructure.GroceryStores[baseline].Products[x].price;
-            localobj[key].groceryStore = baseline;
-        }
-    }
+    return localobj;
+   
 };
-};
-getCheapestPrice(grocerylist, "Aldis");
+console.log(getCheapestPrice(grocerylist, "Aldis"));
