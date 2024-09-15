@@ -80,37 +80,28 @@ const grocerylist = {
 4. Append Grocery Object to have searched for prices
 */
 
-// Recursion?????
-function getCheapestPrice(object, baseline) {
-    const maxStores = 5;
-    const localobj = object;
+// Recursion
+function main(baseline, grocerylist) {
     const hitlist = Object.keys(firestoreStructure.GroceryStores);
-    hitlist.splice(hitlist.indexOf(baseline), 1);
-    console.log(hitlist);
-    for (key in grocerylist) {
-        for (x in firestoreStructure.GroceryStores[baseline].Products) {
-            if (localobj[key].name == firestoreStructure.GroceryStores[baseline].Products[x].type) {
-                localobj[key].price = firestoreStructure.GroceryStores[baseline].Products[x].price;
-                localobj[key].groceryStore = baseline;
-            }
-        };
-        for (GS in hitlist) {
-            for (y in firestoreStructure.GroceryStores[hitlist[GS]].Products) {
-                if (localobj[key].name == firestoreStructure.GroceryStores[hitlist[GS]].Products[y].type) {
-                    if (localobj[key].price > firestoreStructure.GroceryStores[hitlist[GS]].Products[y].price) {
-                        localobj[key].price = firestoreStructure.GroceryStores[hitlist[GS]].Products[y].price;
-                        localobj[key].groceryStore = hitlist[GS];
+    hitlist.splice(0, 0, hitlist.splice(hitlist.indexOf(baseline), 1)[0]);
+    const localobj = grocerylist;
+    function getCheapestPrice(object, hitlist) {
+        if (hitlist[0] !== undefined) {
+            for (key in object) {
+                for (x in firestoreStructure.GroceryStores[hitlist[0]].Products) {
+                    if (firestoreStructure.GroceryStores[hitlist[0]].Products[x].type == object[key].name && (firestoreStructure.GroceryStores[hitlist[0]].Products[x].price < object[key].price || object[key].price == null)) {
+                        object[key].price = firestoreStructure.GroceryStores[hitlist[0]].Products[x].price;
+                        object[key].groceryStore = hitlist[0];
                     }
                 }
-            };
-        };
-    };
-    
-    /*
-    - Compare updated localobj prices to another store reference in .json
-    - 
-    */
-    return localobj;
-   
-};
-console.log(getCheapestPrice(grocerylist, "Aldis"));
+            }
+            hitlist.splice(0, 1);
+            return getCheapestPrice(object, hitlist);
+        } else {
+            return object;
+        }
+    }
+    return getCheapestPrice(localobj, hitlist);
+}
+
+//console.log(main("Aldis", grocerylist));
