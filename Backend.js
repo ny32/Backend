@@ -85,6 +85,7 @@ function main(baseline, grocerylist) {
     const hitlist = Object.keys(firestoreStructure.GroceryStores);
     hitlist.splice(0, 0, hitlist.splice(hitlist.indexOf(baseline), 1)[0]);
     const localobj = grocerylist;
+
     function getCheapestPrice(object, hitlist) {
         if (hitlist[0] !== undefined) {
             for (key in object) {
@@ -92,6 +93,7 @@ function main(baseline, grocerylist) {
                     if (firestoreStructure.GroceryStores[hitlist[0]].Products[x].type == object[key].name && (firestoreStructure.GroceryStores[hitlist[0]].Products[x].price < object[key].price || object[key].price == null)) {
                         object[key].price = firestoreStructure.GroceryStores[hitlist[0]].Products[x].price;
                         object[key].groceryStore = hitlist[0];
+                        break;
                     }
                 }
             }
