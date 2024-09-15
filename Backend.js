@@ -95,8 +95,7 @@ function main(baseline, grocerylist) {
                     }
                 }
             }
-            hitlist.splice(0, 1);
-            return getCheapestPrice(object, hitlist);
+            return getCheapestPrice(object, hitlist.splice(0, 1));
         } else {
             return object;
         }
