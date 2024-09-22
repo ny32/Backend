@@ -23,16 +23,19 @@ Quantity Info(Indirect, requires parsing, requires error catching  and has issue
 Product Image Ref(Optional, requires error catching, .getAttribute() method): .product-tile__picture > img
 
 */
+const pusharray = {};
+const fs = require('fs');
+let rawjsondata = fs.readFileSync('./Firestore_M.json');
+let jsondata = JSON.parse(rawjsondata);
 
-const puppeteer = require('puppeteer');
 
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+puppeteer.use(StealthPlugin())
 
-(async () => {
-    const browser = await puppeteer.launch({
-        userDataDir: "./tmp",
-        headless: false,
-        defaultViewport: false
-    })
+puppeteer.launch({ userDataDir: "./tmp",
+    headless: false,
+    defaultViewport: false }).then(async browser => {
     const page = await browser.newPage();
     await page.setExtraHTTPHeaders({
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
@@ -42,8 +45,9 @@ const puppeteer = require('puppeteer');
 
     searchthru = await page.$$(".product-grid__item");
     for (const x of searchthru) {
-        try {const price = await x.evaluate(y => y.querySelector(".product-tile__picture > img").getAttribute('src'));
-            console.log(price);} catch{}
+        try {const price = await x.evaluate(y => y.querySelector(".base-price__regular > span").textContent);
+            pusharray.push({"price": price, "Greeting": "Hi"});} catch{}
     }
     await browser.close();
-})() 
+    console.log(pusharray)
+})
