@@ -235,6 +235,13 @@
 
 
             "Products": {
+                "product1": {
+                    "brand": "Gala",
+                    "price": 0.50,
+                    "type": "Apple",
+                    "unit": "Each",
+                    "unitQuantity": 1
+                },
                 "product2": {
                     "brand": "Chiquita",
                     "price": 0.29,
