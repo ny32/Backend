@@ -40,7 +40,7 @@ Product Image Ref(Optional, requires error catching, .getAttribute() method):  .
 
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
-export async function main(store, query, searchlimit) {
+async function main(store, query, searchlimit) {
     let parent_container, product_price, product_name, product_quantity, product_image, url;
     switch (store) {
         case "Lidl":
@@ -111,3 +111,4 @@ export async function main(store, query, searchlimit) {
         await browser.close();
     })
 }
+main("Aldi", "Ramen", 3)
