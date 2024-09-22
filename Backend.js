@@ -1,4 +1,4 @@
-const firestoreStructure = require('./Firestore_M.json');
+const firestoreStructure = require('./Firestore_M_copy');
 const convert = require('convert-units');
 
 // Sign up for Google Maps API(to factor in transportation costs)
@@ -83,11 +83,11 @@ const grocerylist = {
 // Recursion
 function main(baseline, grocerylist) {
     const hitlist = Object.keys(firestoreStructure.GroceryStores);
-    hitlist.splice(0, 0, hitlist.splice(hitlist.indexOf(baseline), 1)[0]);
+    hitlist.slice(hitlist.indexOf(baseline) + 1);
     const localobj = grocerylist;
 
     function getCheapestPrice(object, hitlist) {
-        if (hitlist[0] !== undefined) {
+        if (hitlist.length !== 0) {
             for (key in object) {
                 for (x in firestoreStructure.GroceryStores[hitlist[0]].Products) {
                     if (firestoreStructure.GroceryStores[hitlist[0]].Products[x].type == object[key].name && (firestoreStructure.GroceryStores[hitlist[0]].Products[x].price < object[key].price || object[key].price == null)) {
@@ -97,7 +97,7 @@ function main(baseline, grocerylist) {
                     }
                 }
             }
-            return getCheapestPrice(object, hitlist.splice(0, 1));
+            return getCheapestPrice(object, hitlist.slice(1));
         } else {
             return object;
         }
@@ -105,4 +105,4 @@ function main(baseline, grocerylist) {
     return getCheapestPrice(localobj, hitlist);
 }
 
-//console.log(main("Aldis", grocerylist));
+console.log(main("Aldis", grocerylist));

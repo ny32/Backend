@@ -1,0 +1,340 @@
+{
+    "GroceryStores": {
+        "Walmart": {
+            "BrandImage": "Path/to/Brand",
+            "Cost_Preferability": 1,
+            
+            "Products": {
+                "product1": {
+                    "brand": null,
+                    "price": 0.69,
+                    "type": "Apple",
+                    "unit": "Each",
+                    "unitQuantity": 1
+                },
+                "product2": {
+                    "brand": null,
+                    "price": 0.24,
+                    "type": "Banana",
+                    "unit": "Each",
+                    "unitQuantity": 1
+                },
+                "product3": {
+                    "brand": null,
+                    "price": 3.18,
+                    "type": "Lettuce",
+                    "unit": "Each",
+                    "unitQuantity": 3
+                },
+                "product4": {
+                    "brand": null,
+                    "price": 1.08,
+                    "type": "Carrots",
+                    "unit": "Lb",
+                    "unitQuantity": 1
+                },
+                "product5": {
+                    "brand": "Great Value",
+                    "price": 1.56,
+                    "type": "Milk",
+                    "unit": "Half Gallon",
+                    "unitQuantity": 1
+                },
+                "product6": {
+                    "brand": null,
+                    "price": 3.77,
+                    "type": "Eggs",
+                    "unit": "Count",
+                    "unitQuantity": 12
+                },
+                "product7": {
+                    "brand": null,
+                    "price": 2.48,
+                    "type": "American Cheese",
+                    "unit": "Count",
+                    "unitQuantity": 24
+                },
+                "product8": {
+                    "brand": "Purdue",
+                    "price": 5.45,
+                    "type": "Chicken",
+                    "unit": "1-2lb",
+                    "unitQuantity": 1
+                },
+                "product9": {
+                    "brand": null,
+                    "price": 4.24,
+                    "type": "Beef",
+                    "unit": "lb",
+                    "unitQuantity": 1
+                },
+                "product10": {
+                    "brand": "Great Value",
+                    "price": 1.97,
+                    "type": "Ground Turkey",
+                    "unit": "oz",
+                    "unitQuantity": 20
+                },
+                "product11": {
+                    "brand": "Great Value",
+                    "price": 0.92,
+                    "type": "Rice",
+                    "unit": "oz",
+                    "unitQuantity": 16
+                },
+                "product12": {
+                    "brand": "Great Value",
+                    "price": 5.48,
+                    "type": "Mixed Nuts",
+                    "unit": "oz",
+                    "unitQuantity": 14.75
+                },
+                "product13": {
+                    "brand": "Great Value",
+                    "price": 2.48,
+                    "type": "Cheese Crackers",
+                    "unit": "oz",
+                    "unitQuantity": 12.4
+                },
+                "product14": {
+                    "brand": null,
+                    "price": 0.68,
+                    "type": "Paper Towels",
+                    "unit": "Sheets",
+                    "unitQuantity": 88
+                },
+                "product15": {
+                    "brand": null,
+                    "price": 0.94,
+                    "type": "Toilet Paper",
+                    "unit": "Rolls",
+                    "unitQuantity": 4
+                }
+            }
+        },
+        
+
+        "Lidl": {
+            "BrandImage": "Path/to/Brand",
+            "Cost_Preferability": 1,
+
+
+            "Products": {
+                "product1": {
+                    "brand": "Honeycrisp",
+                    "price": 0.85,
+                    "type": "Apple",
+                    "unit": "Each",
+                    "unitQuantity": 1
+                },
+                "product2": {
+                    "brand": "Dole",
+                    "price": 0.32,
+                    "type": "Banana",
+                    "unit": "Each",
+                    "unitQuantity": 1
+                },
+                "product3": {
+                    "brand": "Organic Girl",
+                    "price": 3.99,
+                    "type": "Lettuce",
+                    "unit": "Bag",
+                    "unitQuantity": 1
+                },
+                "product4": {
+                    "brand": "Green Giant",
+                    "price": 1.50,
+                    "type": "Carrots",
+                    "unit": "Bag",
+                    "unitQuantity": 2
+                },
+                "product5": {
+                    "brand": "Organic Valley",
+                    "price": 4.29,
+                    "type": "Milk",
+                    "unit": "Gallon",
+                    "unitQuantity": 1
+                },
+                "product6": {
+                    "brand": "Vital Farms",
+                    "price": 5.49,
+                    "type": "Eggs",
+                    "unit": "Dozen",
+                    "unitQuantity": 1
+                },
+                "product7": {
+                    "brand": "Sargento",
+                    "price": 3.49,
+                    "type": "American Cheese",
+                    "unit": "Slices",
+                    "unitQuantity": 12
+                },
+                "product8": {
+                    "brand": "Perdue",
+                    "price": 7.29,
+                    "type": "Chicken",
+                    "unit": "Whole",
+                    "unitQuantity": 3
+                },
+                "product9": {
+                    "brand": "Grass Fed",
+                    "price": 5.99,
+                    "type": "Beef",
+                    "unit": "lb",
+                    "unitQuantity": 1
+                },
+                "product10": {
+                    "brand": "Oscar Mayer",
+                    "price": 2.99,
+                    "type": "Bacon",
+                    "unit": "Pack",
+                    "unitQuantity": 12
+                },
+                "product11": {
+                    "brand": "Minute Rice",
+                    "price": 1.99,
+                    "type": "Rice",
+                    "unit": "lb",
+                    "unitQuantity": 2
+                },
+                "product12": {
+                    "brand": "Blue Diamond",
+                    "price": 7.49,
+                    "type": "Mixed Nuts",
+                    "unit": "Bag",
+                    "unitQuantity": 12
+                },
+                "product13": {
+                    "brand": "Ritz",
+                    "price": 0.79,
+                    "type": "Cheese Crackers",
+                    "unit": "Box",
+                    "unitQuantity": 11.5
+                },
+                "product14": {
+                    "brand": "Scott",
+                    "price": 1.99,
+                    "type": "Paper Towels",
+                    "unit": "Roll",
+                    "unitQuantity": 1
+                },
+                "product15": {
+                    "brand": "Kirkland",
+                    "price": 5.49,
+                    "type": "Toilet Paper",
+                    "unit": "Pack",
+                    "unitQuantity": 12
+                }
+            }
+        },
+
+
+        "Aldis": {
+            "BrandImage": "Path/to/Brand",
+            "Cost_Preferability": 1,
+
+
+            "Products": {
+                "product2": {
+                    "brand": "Chiquita",
+                    "price": 0.29,
+                    "type": "Banana",
+                    "unit": "Each",
+                    "unitQuantity": 1
+                },
+                "product3": {
+                    "brand": "Earthbound Farm",
+                    "price": 3.49,
+                    "type": "Lettuce",
+                    "unit": "Head",
+                    "unitQuantity": 1
+                },
+                "product4": {
+                    "brand": "Bolthouse Farms",
+                    "price": 1.25,
+                    "type": "Carrots",
+                    "unit": "Bag",
+                    "unitQuantity": 16
+                },
+                "product5": {
+                    "brand": "Horizon Organic",
+                    "price": 3.99,
+                    "type": "Milk",
+                    "unit": "Quart",
+                    "unitQuantity": 1
+                },
+                "product6": {
+                    "brand": "Eggland's Best",
+                    "price": 4.29,
+                    "type": "Eggs",
+                    "unit": "Dozen",
+                    "unitQuantity": 1
+                },
+                "product7": {
+                    "brand": "Kraft",
+                    "price": 3.19,
+                    "type": "American Cheese",
+                    "unit": "Slices",
+                    "unitQuantity": 16
+                },
+                "product8": {
+                    "brand": "Tyson",
+                    "price": 6.99,
+                    "type": "Chicken",
+                    "unit": "lb",
+                    "unitQuantity": 2.5
+                },
+                "product9": {
+                    "brand": "Angus",
+                    "price": 5.49,
+                    "type": "Beef",
+                    "unit": "lb",
+                    "unitQuantity": 1
+                },
+                "product10": {
+                    "brand": "Jennie-O",
+                    "price": 2.29,
+                    "type": "Ground Turkey",
+                    "unit": "lb",
+                    "unitQuantity": 1
+                },
+                "product11": {
+                    "brand": "Uncle Ben's",
+                    "price": 1.79,
+                    "type": "Rice",
+                    "unit": "lb",
+                    "unitQuantity": 2
+                },
+                "product12": {
+                    "brand": "Planters",
+                    "price": 6.99,
+                    "type": "Mixed Nuts",
+                    "unit": "Can",
+                    "unitQuantity": 10.3
+                },
+                "product13": {
+                    "brand": "Cheez-It",
+                    "price": 3.29,
+                    "type": "Cheese Crackers",
+                    "unit": "Box",
+                    "unitQuantity": 12.4
+                },
+                "product14": {
+                    "brand": "Bounty",
+                    "price": 2.49,
+                    "type": "Paper Towels",
+                    "unit": "Roll",
+                    "unitQuantity": 1
+                },
+                "product15": {
+                    "brand": "Charmin",
+                    "price": 4.99,
+                    "type": "Toilet Paper",
+                    "unit": "Pack",
+                    "unitQuantity": 6
+                }
+            }
+        }
+    }
+
+  }
