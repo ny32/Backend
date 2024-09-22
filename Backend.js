@@ -90,11 +90,15 @@ function main(baseline, grocerylist) {
         if (hitlist.length !== 0) {
             for (key in object) {
                 for (x in firestoreStructure.GroceryStores[hitlist[0]].Products) {
-                    if (firestoreStructure.GroceryStores[hitlist[0]].Products[x].type == object[key].name && (firestoreStructure.GroceryStores[hitlist[0]].Products[x].price < object[key].price || object[key].price == null)) {
-                        object[key].price = firestoreStructure.GroceryStores[hitlist[0]].Products[x].price;
-                        object[key].groceryStore = hitlist[0];
+                    if (firestoreStructure.GroceryStores[hitlist[0]].Products[x].type == object[key].name) {
+                        if (firestoreStructure.GroceryStores[hitlist[0]].Products[x].price < object[key].price || object[key].price == null) {
+                            object[key].price = firestoreStructure.GroceryStores[hitlist[0]].Products[x].price;
+                            object[key].groceryStore = hitlist[0];
                         break;
-                    }
+                    } else {
+                        console.log('PROBLEMATIC Could not find: ' + object[key].name + ' at ');
+                      }
+                    } 
                 }
             }
             return getCheapestPrice(object, hitlist.slice(1));
