@@ -75,13 +75,6 @@
                     "unit": "oz",
                     "unitQuantity": 20
                 },
-                "product11": {
-                    "brand": "Great Value",
-                    "price": 0.92,
-                    "type": "Rice",
-                    "unit": "oz",
-                    "unitQuantity": 16
-                },
                 "product12": {
                     "brand": "Great Value",
                     "price": 5.48,
@@ -124,13 +117,6 @@
                     "brand": "Honeycrisp",
                     "price": 0.85,
                     "type": "Apple",
-                    "unit": "Each",
-                    "unitQuantity": 1
-                },
-                "product2": {
-                    "brand": "Dole",
-                    "price": 0.32,
-                    "type": "Banana",
                     "unit": "Each",
                     "unitQuantity": 1
                 },
@@ -235,13 +221,6 @@
 
 
             "Products": {
-                "product1": {
-                    "brand": "Gala",
-                    "price": 0.50,
-                    "type": "Apple",
-                    "unit": "Each",
-                    "unitQuantity": 1
-                },
                 "product2": {
                     "brand": "Chiquita",
                     "price": 0.29,

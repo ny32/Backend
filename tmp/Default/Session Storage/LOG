@@ -1,3 +1,6 @@
-2024/09/22-16:41:00.957 6d24 Reusing MANIFEST C:\Users\Nish\Desktop\Code\comp\Web-Scraping\tmp\Default\Session Storage/MANIFEST-000001
-2024/09/22-16:41:00.962 6d24 Recovering log #7
-2024/09/22-16:41:00.965 6d24 Reusing old log C:\Users\Nish\Desktop\Code\comp\Web-Scraping\tmp\Default\Session Storage/000007.log 
+2024/09/22-18:41:51.460 78a8 Reusing MANIFEST C:\Users\Nish\Desktop\Code\comp\Web-Scraping\tmp\Default\Session Storage/MANIFEST-000001
+2024/09/22-18:41:51.465 78a8 Recovering log #7
+2024/09/22-18:41:51.469 78a8 Reusing old log C:\Users\Nish\Desktop\Code\comp\Web-Scraping\tmp\Default\Session Storage/000007.log 
+2024/09/22-18:41:53.486 310c Level-0 table #11: started
+2024/09/22-18:41:53.492 310c Level-0 table #11: 13856 bytes OK
+2024/09/22-18:41:53.494 310c Delete type=0 #7

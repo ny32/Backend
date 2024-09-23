@@ -1,5 +1,4 @@
 const firestoreStructure = require('./Firestore_M_copy');
-const convert = require('convert-units');
 
 // Sign up for Google Maps API(to factor in transportation costs)
 //console.log(firestoreStructure.GroceryStores.Lidl.Products.product1);
@@ -81,34 +80,41 @@ const grocerylist = {
 */
 
 // Recursion
-function main(baseline, grocerylist) {
-    const hitlist = Object.keys(firestoreStructure.GroceryStores);
-    hitlist.slice(hitlist.indexOf(baseline) + 1);
-    const localobj = grocerylist;
-
-    function getCheapestPrice(object, hitlist) {
-        if (hitlist.length !== 0) {
-            for (key in object) {
-                let found = false;
-                for (x in firestoreStructure.GroceryStores[hitlist[0]].Products) {
-                    if (firestoreStructure.GroceryStores[hitlist[0]].Products[x].type == object[key].name) {
-                        found = true;
-                        if (firestoreStructure.GroceryStores[hitlist[0]].Products[x].price < object[key].price || object[key].price == null) {
-                            object[key].price = firestoreStructure.GroceryStores[hitlist[0]].Products[x].price;
-                            object[key].groceryStore = hitlist[0];
-                        }
-                        break;
+function getCheapestPrice(object, hitlist) {
+    if (hitlist.length !== 0) {
+        const currentStore = hitlist[0];
+        for (key in object) {
+            let found = false;
+            const FirebaseRef = firestoreStructure.GroceryStores[currentStore].Products;
+            for (x in FirebaseRef) {                    
+                if (FirebaseRef[x].type == object[key].name) {
+                    found = true;
+                    if (FirebaseRef[x].price < object[key].price || object[key].price == null) {
+                        object[key].price = FirebaseRef[x].price;
+                        object[key].groceryStore = currentStore;
                     }
-                } if (!found) {
-                    console.log("Item not found at " + hitlist[0]);
+                    break;
                 }
-            } 
-            return getCheapestPrice(object, hitlist.slice(1));
-        } else {
-            return object;
-        }
+            } if (!found ) {
+                console.log(object[key].name + " not found in " + currentStore)
+            }
+        } 
+        return getCheapestPrice(object, hitlist.slice(1));
+    } else {
+        return object;
     }
-    return getCheapestPrice(localobj, hitlist);
 }
 
-console.log(main("Aldis", grocerylist));
+function main(grocerylist, baseline) {
+    const localobj = grocerylist;
+    const hitlist = Object.keys(firestoreStructure.GroceryStores);
+    
+    baseline = hitlist.indexOf(baseline)
+    if (baseline != -1) { 
+        hitlist.unshift(hitlist.splice(baseline, 1)[0])
+    }
+    // These few lines of code above will locate aldis, and then move it to the front(the if condition just checks if it exists, indexof will return -1 if it doesn't exist)
+
+    return getCheapestPrice(localobj, hitlist);
+}
+console.log(main(grocerylist, "Aldis"));
