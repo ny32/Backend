@@ -1,47 +1,22 @@
 /*
-Ideal Stores(more later): 
--- Walmart --
-Issues with bot-detection bypass and avoidance
-
-
--- Lidl --
-Parent Container Ref: .product-card
-
-Product Price Ref: .product-price-new__price
-Product Name Ref: .product-card__title
-Quantity Info(Indirect, requires parsing, requires error catching): .product-card__subtext
-Product Image Ref(Optional, requires error catching, .getAttribute() method): .product-card__image > img
-
--- Aldis -- 
-Parent Container Ref: .product-grid__item
-
-Product Price Ref: .base-price__regular > span
-Product Name Ref: .product-tile__name > p
-Quantity Info(Indirect, requires parsing, requires error catching  and has issue with "oranges" query, 2nd item is a no-show): .product-tile__unit-of-measurement > p
-Product Image Ref(Optional, requires error catching, .getAttribute() method): .product-tile__picture > img
-
--- Wegmans -- 
-Parent Container Ref: .css-yxhcyb
-
-Product Price Ref: .css-zqx11d
-Product Name Ref: .css-131yigi
-Quantity Info(Indirect, requires parsing, requires error catching  and has issue with "oranges" query, 2nd item is a no-show): .css-1kh7mkb
-Product Image Ref(Optional, requires error catching, .getAttribute() method):  .css-15zffbe
-
--- Harris Teeter -- 
-Parent Container Ref: .AutoGrid
-
-Product Price Ref: .kds-Price kds-Price--alternate
-Product Name Ref: .kds-Link kds-Link--inherit kds-Link--implied ProductDescription-truncated overflow-hidden text-primary
-Quantity Info(Indirect, requires parsing, requires error catching  and has issue with "oranges" query, 2nd item is a no-show): .kds-Text--s text-neutral-more-prominent
-Product Image Ref(Optional, requires error catching, .getAttribute() method):  .kds-Image-img
-
+Broken cases (why no work):
+        case "Harris_Teeter":
+            parent_container = ".ProductCard";
+            product_price = "";
+            product_name = "kds-Link"; 
+            product_quantity = "kds-Text--s";
+            product_image = ".kds-Image-img";
+            url = "https://www.harristeeter.com/search?query=";
+            special = true;
+            break;
 */
-
+const fs = require('fs');
+const data = JSON.parse(fs.readFileSync('./Firestore_M.json'));
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
-async function main(store, query, searchlimit) {
+async function webscraper(store, query, searchlimit) {
     let parent_container, product_price, product_name, product_quantity, product_image, url;
+    let special = false;
     switch (store) {
         case "Lidl":
             parent_container = ".product-card";
@@ -67,13 +42,27 @@ async function main(store, query, searchlimit) {
             product_image = ".css-15zffbe";
             url = "https://shop.wegmans.com/search?search_term=";
             break;
+        case "Trader_Joes":
+            parent_container = ".SearchResults_searchResults__category__2aZDP > div > article";
+            product_price = ".ProductPrice_productPrice__price__3-50j";
+            product_name = ".SearchResultCard_searchResultCard__title__2PdBv > a";
+            product_quantity = ".ProductPrice_productPrice__unit__2jvkA";
+            product_image = ".SearchResultCard_searchResultCard__image__2Yf2S > img";
+            url = "https://www.traderjoes.com/home/search?q=";
+            break;
+        case "Safeway":
+            parent_container = ".product-card-container";
+            product_price = ".product-price__saleprice";
+            product_name = ".product-title__name";
+            product_quantity = ".product-title__qty > .sr-only";
+            product_image = ".product-card-container__product-image";
+            url = "https://www.safeway.com/shop/search-results.html?q=";
+            break;
     };
     
 
     puppeteer.use(StealthPlugin())
-    puppeteer.launch({ userDataDir: "./tmp",
-        headless: false,
-        defaultViewport: false }).then(async browser => {
+    puppeteer.launch({ userDataDir: "./tmp"}).then(async browser => {
         const page = await browser.newPage();
         await page.setExtraHTTPHeaders({
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
@@ -82,7 +71,7 @@ async function main(store, query, searchlimit) {
         await page.goto(url + query);
         await page.waitForSelector(parent_container, { timeout: 30000 });
         searchthru = await page.$$(parent_container);
-        let price, name, quantity, image;
+        let price, name, quantity, image, productname;
         let searchdepth = 0;
         for (const x of searchthru) {
             if (searchdepth != searchlimit) {
@@ -102,13 +91,17 @@ async function main(store, query, searchlimit) {
                     const d = el.querySelector(product_image);
                     return d ? d.getAttribute('src') : null;
                 }, product_image);
-                console.log(price, name, quantity, image);
+                productname = name + "productdepth" + searchdepth.toString();
+                if (!data[store]) {
+                    data[store] = { Products: {}};
+                }
+                data[store]["Products"][productname] = {"price": price, "name": name, "unit": quantity, "image": image};
                 searchdepth++;
             } else {
                 break;
             }
         }
         await browser.close();
+        fs.writeFileSync('Firestore_M.json', JSON.stringify(data, null, 2));
     })
 }
-main("Aldi", "Ramen", 3)

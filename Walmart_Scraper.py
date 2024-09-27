@@ -21,13 +21,13 @@ def Web_Scrape(search, searchlimit):
         items = data["props"]["pageProps"]["initialData"]["searchResult"]["itemStacks"][0]["items"]
         
         results = []
-        for i in range(min(searchlimit, len(items))):
+        for i in range(min(searchlimit+1, len(items))):
             item = items[i]
             result = {
-                "name": item.get("name", "N/A"),
+                "name": (item.get("name", "N/A")).rsplit(',', 1)[0].strip() if ',' in (item.get("name", "N/A")) else item.get("name", "N/A"),
                 "price": item.get("price", "N/A"),
-                "quantity": item.get("qty", "N/A"),
-                "image": item.get("image", "N/A")
+                "quantity": (item.get("name", "N/A")).rsplit(',', 1)[-1].strip() if ',' in (item.get("name", "N/A")) else None,
+                "image": item.get("image", "N/A"),
             }
             results.append(result)
         return results
@@ -35,5 +35,5 @@ def Web_Scrape(search, searchlimit):
         return None
 
 # Example usage
-search_results = Web_Scrape("Ramen", 6)
-print(search_results)  # This will print the raw results
+search_results = Web_Scrape("Ramen", 3)
+print(search_results)

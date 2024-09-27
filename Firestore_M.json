@@ -1,26 +1,11 @@
 {
-    "GroceryStores": {
-        "Walmart": {
-            "BrandImage": "Path/to/Brand",
-            "Cost_Preferability": 1,
-            
-            "Products": {
-                "product1": {
-                    "brand": null,
-                    "price": 0.69,
-                    "type": "Apple",
-                    "unit": "Each",
-                    "unitQuantity": 1
-                },
-                "product2": {
-                    "brand": null,
-                    "price": 0.24,
-                    "type": "Banana",
-                    "unit": "Each",
-                    "unitQuantity": 1
-                }
-            }
-        }
+  "GroceryStores": {
+    "Walmart": {
+      "Products": {}
     }
-
+  },
+  "Safeway": {
+    "Products": {
+    }
   }
+}

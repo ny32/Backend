@@ -1,4 +1,5 @@
-const firestoreStructure = require('./Firestore_M_copy');
+const firestoreStructure = require('./Firestore_M');
+const { webscraper } = require('./Web_Scraper');
 
 // Sign up for Google Maps API(to factor in transportation costs)
 //console.log(firestoreStructure.GroceryStores.Lidl.Products.product1);
@@ -96,7 +97,8 @@ function getCheapestPrice(object, hitlist) {
                     break;
                 }
             } if (!found ) {
-                console.log(object[key].name + " not found in " + currentStore)
+                console.log(object[key].name + " not found in " + currentStore);
+                webscraper(currentStore, object[key].name, 1);
             }
         } 
         return getCheapestPrice(object, hitlist.slice(1));
@@ -117,4 +119,4 @@ function main(grocerylist, baseline) {
 
     return getCheapestPrice(localobj, hitlist);
 }
-console.log(main(grocerylist, "Aldis"));
+console.log(main(grocerylist, "Aldi"));
