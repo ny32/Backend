@@ -1,4 +1,4 @@
-const firestoreStructure = require('./Firestore_M');
+const firestoreStructure = require('./Firestore_M_copy.json');
 const { webscraper } = require('./Web_Scraper');
 
 // Sign up for Google Maps API(to factor in transportation costs)
@@ -32,11 +32,12 @@ Set Baseline store as Aldi's
 
 */
 
+// Grocery list with items
 const grocerylist = {
     1: {
         name: "Apple",
         quantity: 5,
-        unit: null,
+        unit: "kg",
     },
     2: {
         name: "Mixed Nuts",
@@ -70,9 +71,6 @@ const grocerylist = {
     }
 };
 
-
-//Promise???
-
 /*
 1. First access the Grocerylist 
 2. Then access .json Database
@@ -80,8 +78,8 @@ const grocerylist = {
 4. Append Grocery Object to have searched for prices
 */
 
-// Recursion
-function getCheapestPrice(object, hitlist) {
+// Recursive function to find the cheapest price
+async function getCheapestPrice(object, hitlist) {
     if (hitlist.length !== 0) {
         const currentStore = hitlist[0];
         for (key in object) {
@@ -96,9 +94,9 @@ function getCheapestPrice(object, hitlist) {
                     }
                     break;
                 }
-            } if (!found ) {
+            } if (!found) {
                 console.log(object[key].name + " not found in " + currentStore);
-                webscraper(currentStore, object[key].name, 1);
+                await webscraper(currentStore, object[key].name, 1);
             }
         } 
         return getCheapestPrice(object, hitlist.slice(1));
@@ -107,16 +105,20 @@ function getCheapestPrice(object, hitlist) {
     }
 }
 
-function main(grocerylist, baseline) {
+async function main(grocerylist, baseline) {
     const localobj = grocerylist;
     const hitlist = Object.keys(firestoreStructure.GroceryStores);
-    
-    baseline = hitlist.indexOf(baseline)
-    if (baseline != -1) { 
-        hitlist.unshift(hitlist.splice(baseline, 1)[0])
+
+    const baselineIndex = hitlist.indexOf(baseline);
+    if (baselineIndex !== -1) {
+        hitlist.unshift(hitlist.splice(baselineIndex, 1)[0]);
     }
     // These few lines of code above will locate aldis, and then move it to the front(the if condition just checks if it exists, indexof will return -1 if it doesn't exist)
 
-    return getCheapestPrice(localobj, hitlist);
+    return await getCheapestPrice(localobj, hitlist);
 }
-console.log(main(grocerylist, "Aldi"));
+
+// Execute the main function
+main(grocerylist, "Aldi")
+    .then(result => console.log(result))
+    .catch(error => console.error("Error in main:", error));
