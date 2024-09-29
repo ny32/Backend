@@ -3,7 +3,8 @@ const math = require('mathjs');
 const acceptedNumValues = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."];
 // Multiple-Use Functions
 function findUnit(iunit) {
-    let workingval = iunit.toLowerCase();
+    iunit = iunit.toLowerCase();
+    let workingval = iunit;
     let a = "";
     if (iunit.includes(".")) {
         workingval = replacePeriod(iunit, acceptedNumValues)
@@ -119,4 +120,4 @@ function cleanup(iprice, iunit) {
 
     return [price, unit];
 };
-module.exports  = {cleanup};
+module.exports  = { cleanup };

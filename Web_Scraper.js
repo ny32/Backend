@@ -11,6 +11,7 @@ Broken cases (why no work):
             break;
 */
 const fs = require('fs');
+const { cleanup } = require('./Cleanup.js');
 const data = JSON.parse(fs.readFileSync('./Firestore_M_copy.json'));
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
@@ -73,7 +74,7 @@ async function webscraper(store, query, searchlimit) {
                 break; // Break if we've reached the search limit
             }
 
-            const price = await x.evaluate((el, product_price) => {
+            const rawPrice = await x.evaluate((el, product_price) => {
                 const a = el.querySelector(product_price);
                 return a ? a.textContent.trim() : null;
             }, product_price);
@@ -81,7 +82,7 @@ async function webscraper(store, query, searchlimit) {
                 const b = el.querySelector(product_name);
                 return b ? b.textContent.trim() : null;
             }, product_name);
-            const quantity = await x.evaluate((el, product_quantity) => {
+            const rawQuantity = await x.evaluate((el, product_quantity) => {
                 const c = el.querySelector(product_quantity);
                 return c ? c.textContent.trim() : null;
             }, product_quantity);
@@ -90,16 +91,19 @@ async function webscraper(store, query, searchlimit) {
                 return d ? d.getAttribute('src') : null;
             }, product_image);
 
+            const price = cleanup(rawPrice, rawQuantity)[0];
+            const quantity = cleanup(rawPrice, rawQuantity)[1];
+
             // Define a unique key for the product
             const uniqueKey = name.toLowerCase().trim().replace(/\s+/g, '_');
 
-            if (!data[store]) {
-                data[store] = { Products: {} };
+            if (!data["GroceryStores"][store]) {
+                data["GroceryStores"][store] = { Products: {} };
             }
 
             // Check if product already exists before adding
-            if (!data[store]["Products"][uniqueKey]) {
-                data[store]["Products"][uniqueKey] = { price, name, unit: quantity, image };
+            if (!data["GroceryStores"][store]["Products"][uniqueKey]) {
+                data["GroceryStores"][store]["Products"][uniqueKey] = { price, name, unit: quantity, image };
                 searchdepth++;
             } else {
                 console.log(`Duplicate found for ${name} in ${store}. Skipping...`);

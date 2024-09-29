@@ -1,5 +1,8 @@
 const firestoreStructure = require('./Firestore_M_copy.json');
 const { webscraper } = require('./Web_Scraper');
+//Math - Capable of using unit conversions
+const math = require('mathjs');
+
 
 // Sign up for Google Maps API(to factor in transportation costs)
 //console.log(firestoreStructure.GroceryStores.Lidl.Products.product1);
@@ -45,7 +48,7 @@ const grocerylist = {
         unit: "Bag"
     },
     3: {
-        name: "Paper Towels",
+        name: "Paper Towel",
         quantity: 12,
         unit: "Roll"
     },
@@ -80,15 +83,27 @@ const grocerylist = {
 
 // Recursive function to find the cheapest price
 async function getCheapestPrice(object, hitlist) {
+    let workingPrice = 0, unit1;
     if (hitlist.length !== 0) {
         const currentStore = hitlist[0];
         for (key in object) {
             let found = false;
             const FirebaseRef = firestoreStructure.GroceryStores[currentStore].Products;
             for (x in FirebaseRef) {                    
-                if (FirebaseRef[x].type == object[key].name) {
+                if ((FirebaseRef[x].name.toLowerCase()).includes(object[key].name.toLowerCase())) {
                     found = true;
-                    if (FirebaseRef[x].price < object[key].price || object[key].price == null) {
+
+                    try {workingPrice = FirebaseRef[x].price;
+                        unit1 = math.unit(FirebaseRef[x].unit[0], FirebaseRef[x].unit[1]);
+                        unit1 = unit1.toNumber(object[key].quantity);
+                        workingPrice *= unit1
+                    console.log(workingPrice);
+                    } catch(error) {
+                        console.error("Error: " + error);
+                        workingPrice = FirebaseRef[x].price;
+                    }
+                    workingPrice = FirebaseRef[x].price;
+                    if ( workingPrice < object[key].price || object[key].price == null) {
                         object[key].price = FirebaseRef[x].price;
                         object[key].groceryStore = currentStore;
                     }
@@ -119,6 +134,6 @@ async function main(grocerylist, baseline) {
 }
 
 // Execute the main function
-main(grocerylist, "Aldi")
+main(grocerylist, "Aldi", 1)
     .then(result => console.log(result))
     .catch(error => console.error("Error in main:", error));
