@@ -2,14 +2,41 @@
   "GroceryStores": {
     "Aldi": {
       "Products": {
+        "sugarbee_apples": {
+          "price": 3,
+          "name": "SugarBee Apples",
+          "unit": [
+            3,
+            "kg"
+          ],
+          "image": "https://dm.cms.aldi.cx/is/content/prod1amer/aldi-us-missing-productimage"
+        }
       }
     },
     "Lidl": {
       "Products": {
+        "apple_fritter": {
+          "price": 1.25,
+          "name": "apple fritter",
+          "unit": [
+            1,
+            "kg"
+          ],
+          "image": "https://production-endpoint.azureedge.net/images/6SQ3IDPM61FJAC1GF0QJ0C0/acaaa696-e213-4d36-a77c-9dd74b89bc97/749760_500x500_500x500.tif.jpg"
+        }
       }
     },
     "Safeway": {
       "Products": {
+        "sugar_bee_apple": {
+          "price": 1.9,
+          "name": "Sugar Bee Apple",
+          "unit": [
+            1,
+            "g"
+          ],
+          "image": "//images.albertsons-media.com/is/image/ABS/960316104?$ecom-product-card-desktop-jpg$&defaultImage=Not_Available"
+        }
       }
     }
   }

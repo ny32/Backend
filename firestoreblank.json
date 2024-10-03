@@ -1,0 +1,14 @@
+{
+    "GroceryStores": {
+      "Lidl": {
+        "BrandImage": "Path/to/Brand",
+        "Cost_Preferability": 1,
+        "Products": {}
+      },
+      "Aldi": {
+        "BrandImage": "Path/to/Brand",
+        "Cost_Preferability": 1,
+        "Products": { }
+      }
+    }
+  }

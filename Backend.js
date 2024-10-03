@@ -41,11 +41,13 @@ Set Baseline store as Aldi's
 const grocerylist = {
     1: {
         name: "Apple",
-        unit: [
-            5,
-            "kg",
-        ],
-        price: Number.MAX_SAFE_INTEGER,
+        requestedUnit: "kg",
+        requestedQuantity: 4,
+        //Everything here is algorithm adds
+        fromAlgo: {
+            price: null,
+            Gunit: [],
+        },
     },
     // 2: {
     //     name: "Mixed Nuts",
@@ -93,22 +95,54 @@ const grocerylist = {
 async function getCheapestPrice(object, hitlist) {
     if (hitlist.length !== 0) {
         const currentStore = hitlist[0];
+        let working, workingU, UPrice;
         for (let key in object) {
             let found = false;
             const FirebaseRef = firestoreStructure.GroceryStores[currentStore].Products;
             for (let x in FirebaseRef) {     
                 if ((FirebaseRef[x].name.toLowerCase()).includes(object[key].name.toLowerCase())) {
                     found = true;
+                    working=FirebaseRef[x];
                     break;
                 }
-            } if (!found) {
+            } 
+            if (!found) {
+                // Fix this logic next
                 console.log(object[key].name + " not found in " + currentStore + " database");
                 await webscraper(currentStore, object[key].name, 1)
-            }         
+            } else {
+                //Add comparison logic here 
+                
+                
+                try {
+                    // Convert store quantity to requested unit
+                    const storeQuantity = math.unit(working.unit[0], working.unit[1]).toNumber(object[key].requestedUnit);
+                    
+                    // Calculate price per requested unit
+                    const pricePerUnit = working.price / storeQuantity;
+                    
+                    // Calculate how many store units are needed
+                    const unitsNeeded = Math.ceil(object[key].requestedQuantity / storeQuantity);
+                    
+                    // Calculate total price
+                    const totalPrice = unitsNeeded * working.price;
+                    if (object[key].fromAlgo.price === null || totalPrice < object[key].fromAlgo.price) {
+                        object[key].fromAlgo = {
+                            price: totalPrice,
+                            Nquantity: unitsNeeded,
+                            Grocery_Store: currentStore,
+                            Gunit: working.unit,
+                            pricePerUnit: pricePerUnit
+                        };
+                    }
+                } catch (error) {
+                    console.log(`Error processing ${object[key].name} from ${currentStore}: ${error.message}`);
+                }
+            
+            }        
         } 
         return getCheapestPrice(object, hitlist.slice(1));
     } else {
-        convert(object);
         return object;
     }
 }
@@ -125,31 +159,6 @@ async function main(grocerylist, baseline) {
     return await getCheapestPrice(localobj, hitlist);
 }
 
-async function convert(localobj) {
-    const hitlist = Object.keys(firestoreStructure.GroceryStores);
-    for (let store of hitlist) {
-        for (let key in localobj) {
-            const FirebaseRef = firestoreStructure.GroceryStores[store].Products;
-            for (let item in FirebaseRef) {
-                if ((FirebaseRef[item].name.toLowerCase()).includes(grocerylist[key].name.toLowerCase())) {
-                    const storePrice = FirebaseRef[item].price;
-                    const storeQuantity = FirebaseRef[item].unit[0];
-                    const storeUnit = FirebaseRef[item].unit[1];
-                    try {
-                        const convertedQuantity = math.unit(localobj[key].unit[0], localobj[key].unit[1]).to(storeUnit);
-                        const convertedPrice = (storePrice / storeQuantity) * convertedQuantity.toNumber();
-                        if (localobj[key].price > Number(convertedPrice.toFixed(2))) {
-                            localobj[key].price = Number(convertedPrice.toFixed(2));
-                        }
-                    } catch (err) {
-                        console.error(`Error converting units ${err.message}`);
-                    }
-                }
-                break;
-            }
-        }
-    }
-}
 
 // Execute the main function
 main(grocerylist, "Aldi", 1)
