@@ -2,6 +2,8 @@ const firestoreStructure = require('./Firestore_M_copy.json');
 const { webscraper } = require('./Web_Scraper');
 //Math - Capable of using unit conversions
 const math = require('mathjs');
+const fs = require('fs').promises;
+
 
 
 // Sign up for Google Maps API(to factor in transportation costs)
@@ -39,39 +41,45 @@ Set Baseline store as Aldi's
 const grocerylist = {
     1: {
         name: "Apple",
-        quantity: 5,
-        unit: "kg",
+        unit: [
+            5,
+            "kg",
+        ],
+        price: Number.MAX_SAFE_INTEGER,
     },
-    2: {
-        name: "Mixed Nuts",
-        quantity: 1,
-        unit: "Bag"
-    },
-    3: {
-        name: "Paper Towel",
-        quantity: 12,
-        unit: "Roll"
-    },
-    4: {
-        name: "Carrots",
-        quantity: 1,
-        unit: "Bag"
-    },
-    5: {
-        name: "Chicken",
-        quantity: 1,
-        unit: "Whole",
-    },
-    6: {
-        name: "Cheese Crackers",
-        quantity: 2,
-        unit: "Box",
-    },
-    7: {
-        name: "Rice",
-        quantity: 5,
-        unit: "kg",
-    }
+    // 2: {
+    //     name: "Mixed Nuts",
+    //     unit: [
+    //         10,
+    //         "ounce",
+    //     ],
+    //     price: Number.MAX_SAFE_INTEGER,
+    // },
+    // 3: {
+    //     name: "Paper Towel",
+    //     quantity: 12,
+    //     unit: "Roll"
+    // },
+    // 4: {
+    //     name: "Carrots",
+    //     quantity: 1,
+    //     unit: "Bag"
+    // },
+    // 5: {
+    //     name: "Chicken",
+    //     quantity: 1,
+    //     unit: "Whole",
+    // },
+    // 6: {
+    //     name: "Cheese Crackers",
+    //     quantity: 2,
+    //     unit: "Box",
+    // },
+    // 7: {
+    //     name: "Rice",
+    //     quantity: 5,
+    //     unit: "kg",
+    // }
 };
 
 /*
@@ -83,47 +91,31 @@ const grocerylist = {
 
 // Recursive function to find the cheapest price
 async function getCheapestPrice(object, hitlist) {
-    let workingPrice = 0, unit1;
     if (hitlist.length !== 0) {
         const currentStore = hitlist[0];
-        for (key in object) {
+        for (let key in object) {
             let found = false;
             const FirebaseRef = firestoreStructure.GroceryStores[currentStore].Products;
-            for (x in FirebaseRef) {                    
+            for (let x in FirebaseRef) {     
                 if ((FirebaseRef[x].name.toLowerCase()).includes(object[key].name.toLowerCase())) {
                     found = true;
-
-                    try {workingPrice = FirebaseRef[x].price;
-                        unit1 = math.unit(FirebaseRef[x].unit[0], FirebaseRef[x].unit[1]);
-                        unit1 = unit1.toNumber(object[key].quantity);
-                        workingPrice *= unit1
-                    console.log(workingPrice);
-                    } catch(error) {
-                        console.error("Error: " + error);
-                        workingPrice = FirebaseRef[x].price;
-                    }
-                    workingPrice = FirebaseRef[x].price;
-                    if ( workingPrice < object[key].price || object[key].price == null) {
-                        object[key].price = FirebaseRef[x].price;
-                        object[key].groceryStore = currentStore;
-                    }
                     break;
                 }
             } if (!found) {
-                console.log(object[key].name + " not found in " + currentStore);
-                await webscraper(currentStore, object[key].name, 1);
-            }
+                console.log(object[key].name + " not found in " + currentStore + " database");
+                await webscraper(currentStore, object[key].name, 1)
+            }         
         } 
         return getCheapestPrice(object, hitlist.slice(1));
     } else {
+        convert(object);
         return object;
     }
 }
 
 async function main(grocerylist, baseline) {
-    const localobj = grocerylist;
     const hitlist = Object.keys(firestoreStructure.GroceryStores);
-
+    const localobj = grocerylist;
     const baselineIndex = hitlist.indexOf(baseline);
     if (baselineIndex !== -1) {
         hitlist.unshift(hitlist.splice(baselineIndex, 1)[0]);
@@ -131,6 +123,32 @@ async function main(grocerylist, baseline) {
     // These few lines of code above will locate aldis, and then move it to the front(the if condition just checks if it exists, indexof will return -1 if it doesn't exist)
 
     return await getCheapestPrice(localobj, hitlist);
+}
+
+async function convert(localobj) {
+    const hitlist = Object.keys(firestoreStructure.GroceryStores);
+    for (let store of hitlist) {
+        for (let key in localobj) {
+            const FirebaseRef = firestoreStructure.GroceryStores[store].Products;
+            for (let item in FirebaseRef) {
+                if ((FirebaseRef[item].name.toLowerCase()).includes(grocerylist[key].name.toLowerCase())) {
+                    const storePrice = FirebaseRef[item].price;
+                    const storeQuantity = FirebaseRef[item].unit[0];
+                    const storeUnit = FirebaseRef[item].unit[1];
+                    try {
+                        const convertedQuantity = math.unit(localobj[key].unit[0], localobj[key].unit[1]).to(storeUnit);
+                        const convertedPrice = (storePrice / storeQuantity) * convertedQuantity.toNumber();
+                        if (localobj[key].price > Number(convertedPrice.toFixed(2))) {
+                            localobj[key].price = Number(convertedPrice.toFixed(2));
+                        }
+                    } catch (err) {
+                        console.error(`Error converting units ${err.message}`);
+                    }
+                }
+                break;
+            }
+        }
+    }
 }
 
 // Execute the main function

@@ -1,116 +1,16 @@
 {
   "GroceryStores": {
-    "Lidl": {
-      "BrandImage": "Path/to/Brand",
-      "Cost_Preferability": 1,
+    "Aldi": {
       "Products": {
-        "product1": {
-          "brand": "Honeycrisp",
-          "price": 0.85,
-          "type": "Apple",
-          "unit": "Each",
-          "unitQuantity": 1
-        },
-        "product3": {
-          "brand": "Organic Girl",
-          "price": 3.99,
-          "type": "Lettuce",
-          "unit": "Bag",
-          "unitQuantity": 1
-        },
-        "product4": {
-          "brand": "Green Giant",
-          "price": 1.5,
-          "type": "Carrots",
-          "unit": "Bag",
-          "unitQuantity": 2
-        },
-        "product5": {
-          "brand": "Organic Valley",
-          "price": 4.29,
-          "type": "Milk",
-          "unit": "Gallon",
-          "unitQuantity": 1
-        },
-        "product6": {
-          "brand": "Vital Farms",
-          "price": 5.49,
-          "type": "Eggs",
-          "unit": "Dozen",
-          "unitQuantity": 1
-        },
-        "product7": {
-          "brand": "Sargento",
-          "price": 3.49,
-          "type": "American Cheese",
-          "unit": "Slices",
-          "unitQuantity": 12
-        },
-        "product8": {
-          "brand": "Perdue",
-          "price": 7.29,
-          "type": "Chicken",
-          "unit": "Whole",
-          "unitQuantity": 3
-        },
-        "product9": {
-          "brand": "Grass Fed",
-          "price": 5.99,
-          "type": "Beef",
-          "unit": "lb",
-          "unitQuantity": 1
-        },
-        "product10": {
-          "brand": "Oscar Mayer",
-          "price": 2.99,
-          "type": "Bacon",
-          "unit": "Pack",
-          "unitQuantity": 12
-        },
-        "product11": {
-          "brand": "Minute Rice",
-          "price": 1.99,
-          "type": "Rice",
-          "unit": "lb",
-          "unitQuantity": 2
-        },
-        "product12": {
-          "brand": "Blue Diamond",
-          "price": 7.49,
-          "type": "Mixed Nuts",
-          "unit": "Bag",
-          "unitQuantity": 12
-        },
-        "product13": {
-          "brand": "Ritz",
-          "price": 0.79,
-          "type": "Cheese Crackers",
-          "unit": "Box",
-          "unitQuantity": 11.5
-        },
-        "product14": {
-          "brand": "Scott",
-          "price": 1.99,
-          "type": "Paper Towels",
-          "unit": "Roll",
-          "unitQuantity": 1
-        },
-        "product15": {
-          "brand": "Kirkland",
-          "price": 5.49,
-          "type": "Toilet Paper",
-          "unit": "Pack",
-          "unitQuantity": 12
-        }
       }
     },
-    "Aldi": {
-      "BrandImage": "Path/to/Brand",
-      "Cost_Preferability": 1,
-      "Products": {}
+    "Lidl": {
+      "Products": {
+      }
+    },
+    "Safeway": {
+      "Products": {
+      }
     }
-  },
-  "Aldi": {
-    "Products": {}
   }
 }
