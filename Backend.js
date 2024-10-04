@@ -3,7 +3,7 @@ const { webscraper } = require('./Web_Scraper');
 //Math - Capable of using unit conversions
 const math = require('mathjs');
 const fs = require('fs').promises;
-
+const itemsNotFound = {};
 
 
 // Sign up for Google Maps API(to factor in transportation costs)
@@ -46,16 +46,16 @@ const grocerylist = {
         //Everything here is algorithm adds
         fromAlgo: {
             price: null,
-            Gunit: [],
         },
     },
     // 2: {
-    //     name: "Mixed Nuts",
-    //     unit: [
-    //         10,
-    //         "ounce",
-    //     ],
-    //     price: Number.MAX_SAFE_INTEGER,
+    //     name: "Rice",
+    //     requestedUnit: "lb",
+    //     requestedQuantity: 2,
+    //     //Everything here is algorithm adds
+    //     fromAlgo: {
+    //         price: null,
+    //     },
     // },
     // 3: {
     //     name: "Paper Towel",
@@ -93,9 +93,10 @@ const grocerylist = {
 
 // Recursive function to find the cheapest price
 async function getCheapestPrice(object, hitlist) {
+    
     if (hitlist.length !== 0) {
         const currentStore = hitlist[0];
-        let working, workingU, UPrice;
+        let working;
         for (let key in object) {
             let found = false;
             const FirebaseRef = firestoreStructure.GroceryStores[currentStore].Products;
@@ -109,6 +110,7 @@ async function getCheapestPrice(object, hitlist) {
             if (!found) {
                 // Fix this logic next
                 console.log(object[key].name + " not found in " + currentStore + " database");
+                Object.assign(itemsNotFound, {[key]: object[key]} );
                 await webscraper(currentStore, object[key].name, 1)
             } else {
                 //Add comparison logic here 
@@ -129,11 +131,14 @@ async function getCheapestPrice(object, hitlist) {
                     if (object[key].fromAlgo.price === null || totalPrice < object[key].fromAlgo.price) {
                         object[key].fromAlgo = {
                             price: totalPrice,
-                            Nquantity: unitsNeeded,
+                            quantity: unitsNeeded,
                             Grocery_Store: currentStore,
-                            Gunit: working.unit,
+                            unit: working.unit,
                             pricePerUnit: pricePerUnit
                         };
+
+                        // object[key].fromAlgo.Gunit will return an array, it just is not shown in VScode because of its array depth settings, not sure how to fix
+
                     }
                 } catch (error) {
                     console.log(`Error processing ${object[key].name} from ${currentStore}: ${error.message}`);
@@ -162,5 +167,14 @@ async function main(grocerylist, baseline) {
 
 // Execute the main function
 main(grocerylist, "Aldi", 1)
-    .then(result => console.log(result))
+    .then(result => {
+        
+        if(Object.keys(itemsNotFound).length > 0) {
+            console.log("2nd iteration...")
+            main(itemsNotFound, "Aldi", 1).then(result => {console.log(result)}).catch(error => console.error("Error in main:", error));
+        } else {
+            console.log(result);
+        }
+
+    })
     .catch(error => console.error("Error in main:", error));

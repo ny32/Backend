@@ -1,7 +1,5 @@
-2024/10/03-08:19:35.330 16860 Reusing MANIFEST C:\Users\Nish\Documents\Coding\Comp\Backend\Backend\tmp\Default\Local Storage\leveldb/MANIFEST-000001
-2024/10/03-08:19:35.336 16860 Recovering log #36
-2024/10/03-08:19:35.337 16860 Level-0 table #38: started
-2024/10/03-08:19:35.350 16860 Level-0 table #38: 17371 bytes OK
-2024/10/03-08:19:35.350 16860 Recovering log #37
-2024/10/03-08:19:35.356 16860 Reusing old log C:\Users\Nish\Documents\Coding\Comp\Backend\Backend\tmp\Default\Local Storage\leveldb/000037.log 
-2024/10/03-08:19:35.363 16860 Delete type=0 #36
+2024/10/03-20:05:09.705 1b8e4 Reusing MANIFEST C:\Users\Nish\Documents\Coding\Comp\Backend\Backend\tmp\Default\Local Storage\leveldb/MANIFEST-000001
+2024/10/03-20:05:09.719 1b8e4 Recovering log #47
+2024/10/03-20:05:09.732 1b8e4 Reusing old log C:\Users\Nish\Documents\Coding\Comp\Backend\Backend\tmp\Default\Local Storage\leveldb/000047.log 
+2024/10/03-20:05:11.580 1b8e4 Level-0 table #50: started
+2024/10/03-20:05:11.594 1b8e4 Level-0 table #50: 16117 bytes OK

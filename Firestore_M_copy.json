@@ -1,41 +1,50 @@
 {
   "GroceryStores": {
-    "Aldi": {
-      "Products": {
-        "sugarbee_apples": {
-          "price": 3,
-          "name": "SugarBee Apples",
-          "unit": [
-            3,
-            "kg"
-          ],
-          "image": "https://dm.cms.aldi.cx/is/content/prod1amer/aldi-us-missing-productimage"
-        }
-      }
-    },
     "Lidl": {
+      "BrandImage": "Path/to/Brand",
+      "Cost_Preferability": 1,
       "Products": {
         "apple_fritter": {
-          "price": 1.25,
+          "price": 0.99,
           "name": "apple fritter",
           "unit": [
-            1,
-            "kg"
+            2.797,
+            "oz"
           ],
           "image": "https://production-endpoint.azureedge.net/images/6SQ3IDPM61FJAC1GF0QJ0C0/acaaa696-e213-4d36-a77c-9dd74b89bc97/749760_500x500_500x500.tif.jpg"
+        },
+        "honeycrisp_apple": {
+          "price": 1.99,
+          "name": "Honeycrisp apple",
+          "unit": [
+            1,
+            "lb"
+          ],
+          "image": "https://production-endpoint.azureedge.net/images/68QJAD9M65FJAC1GF0QJ0C0/948330f9-dab9-487a-b055-47bfed310cc9/255561_500x500_500x500.jpg.jpg"
         }
       }
     },
-    "Safeway": {
+    "Aldi": {
+      "BrandImage": "Path/to/Brand",
+      "Cost_Preferability": 1,
       "Products": {
-        "sugar_bee_apple": {
-          "price": 1.9,
-          "name": "Sugar Bee Apple",
+        "sugarbee_apples": {
+          "price": 4.19,
+          "name": "SugarBee Apples",
+          "unit": [
+            2,
+            "lb"
+          ],
+          "image": "https://dm.cms.aldi.cx/is/content/prod1amer/aldi-us-missing-productimage"
+        },
+        "apple_corer,_green": {
+          "price": 4.99,
+          "name": "Apple Corer, Green",
           "unit": [
             1,
-            "g"
+            "Not Found"
           ],
-          "image": "//images.albertsons-media.com/is/image/ABS/960316104?$ecom-product-card-desktop-jpg$&defaultImage=Not_Available"
+          "image": "https://dm.cms.aldi.cx/is/image/prod1amer/product/jpg/scaleWidth/232/33214312-fa64-463b-941c-3fa9d3b95e76/Apple%20Corer%20Green"
         }
       }
     }
