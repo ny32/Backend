@@ -7,7 +7,6 @@
                 product_quantity = "kds-Text--s";
                 product_image = ".kds-Image-img";
                 url = "https://www.harristeeter.com/search?query=";
-                special = true;
                 break;
     */
     const fs = require('fs');
@@ -15,10 +14,10 @@
     const data = JSON.parse(fs.readFileSync('./Firestore_M_copy.json'));
     const puppeteer = require('puppeteer-extra');
     const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+    let returnData;
 
     async function webscraper(store, query, searchlimit) {
         let parent_container, product_price, product_name, product_quantity, product_image, url;
-        let special = false;
         // Configure the scraper based on the store
         switch (store) {
             case "Lidl":
@@ -98,13 +97,14 @@
                 const uniqueKey = name.toLowerCase().trim().replace(/\s+/g, '_');
 
                 if (!data["GroceryStores"][store]) {
-                    data["GroceryStores"][store] = { Products: {} };
+                    data["GroceryStores"][store] = { "Products": {} };
                 }
 
                 // Check if product already exists before adding
                 if (!data["GroceryStores"][store]["Products"][uniqueKey]) {
                     data["GroceryStores"][store]["Products"][uniqueKey] = { price, name, unit: quantity, image };
                     searchdepth++;
+                    returnData = data["GroceryStores"][store]["Products"][uniqueKey];
                 } else {
                     console.log(`Duplicate found for ${name} in ${store}. Skipping...`);
                 }
@@ -114,7 +114,7 @@
             fs.writeFileSync('Firestore_M_copy.json', JSON.stringify(data, null, 2));
 
             // Optionally return the scraped data
-            return data[store]?.Products || {};
+            return returnData;
         } catch (error) {
             console.error("Error during web scraping:", error);
         } finally {

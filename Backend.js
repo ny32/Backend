@@ -48,15 +48,15 @@ const grocerylist = {
             price: null,
         },
     },
-    // 2: {
-    //     name: "Rice",
-    //     requestedUnit: "lb",
-    //     requestedQuantity: 2,
-    //     //Everything here is algorithm adds
-    //     fromAlgo: {
-    //         price: null,
-    //     },
-    // },
+    2: {
+        name: "Rice",
+        requestedUnit: "lb",
+        requestedQuantity: 2,
+        //Everything here is algorithm adds
+        fromAlgo: {
+            price: null,
+        },
+    },
     // 3: {
     //     name: "Paper Towel",
     //     quantity: 12,
@@ -110,41 +110,41 @@ async function getCheapestPrice(object, hitlist) {
             if (!found) {
                 // Fix this logic next
                 console.log(object[key].name + " not found in " + currentStore + " database");
-                Object.assign(itemsNotFound, {[key]: object[key]} );
-                await webscraper(currentStore, object[key].name, 1)
-            } else {
-                //Add comparison logic here 
+                const a = await webscraper(currentStore, object[key].name, 1);
+                working=a;
                 
+            }
+            //Comparison logic below 
+            try {
+                // Convert store quantity to requested unit
+                const storeQuantity = math.unit(working.unit[0], working.unit[1]).toNumber(object[key].requestedUnit);
                 
-                try {
-                    // Convert store quantity to requested unit
-                    const storeQuantity = math.unit(working.unit[0], working.unit[1]).toNumber(object[key].requestedUnit);
-                    
-                    // Calculate price per requested unit
-                    
-                    // Calculate how many store units are needed
-                    const unitsNeeded = Math.ceil(object[key].requestedQuantity / storeQuantity);
-                    
-                    // Calculate total price
-                    const totalPrice = Number((unitsNeeded * working.price).toFixed(2));
-                    
-                    if (object[key].fromAlgo.price === null || totalPrice < object[key].fromAlgo.price) {
-                        object[key].fromAlgo = {
-                            price: totalPrice,
-                            quantity: unitsNeeded,
-                            Grocery_Store: currentStore,
-                            unit: working.unit,
-                            pricePerUnit: working.price
-                        };
-
-                        // object[key].fromAlgo.Gunit will return an array, it just is not shown in VScode because of its array depth settings, not sure how to fix
-
-                    }
-                } catch (error) {
-                    console.log(`Error processing ${object[key].name} from ${currentStore}: ${error.message}`);
+                // Calculate price per requested unit
+                
+                // Calculate how many store units are needed
+                const unitsNeeded = Math.ceil(object[key].requestedQuantity / storeQuantity);
+                
+                // Calculate total price
+                const totalPrice = Number((unitsNeeded * working.price).toFixed(2));
+                
+                if (object[key].fromAlgo.price === null || totalPrice < object[key].fromAlgo.price) {
+                    object[key].fromAlgo = {
+                        price: totalPrice,
+                        quantity: unitsNeeded,
+                        Grocery_Store: currentStore,
+                        unit: working.unit,
+                        pricePerUnit: working.price
+                    };
+        
+                    // object[key].fromAlgo.Gunit will return an array, it just is not shown in VScode because of its array depth settings, not sure how to fix
+        
                 }
-            
-            }        
+            } catch (error) {
+                console.log(`Error processing ${object[key].name} from ${currentStore}: ${error.message}`);
+            }
+                
+                
+                    
         } 
         return getCheapestPrice(object, hitlist.slice(1));
     } else {
@@ -167,14 +167,5 @@ async function main(grocerylist, baseline) {
 
 // Execute the main function
 main(grocerylist, "Aldi", 1)
-    .then(result => {
-        
-        if(Object.keys(itemsNotFound).length > 0) {
-            console.log("2nd iteration...")
-            main(itemsNotFound, "Aldi", 1).then(result => {console.log(result)}).catch(error => console.error("Error in main:", error));
-        } else {
-            console.log(result);
-        }
-
-    })
+    .then(result => console.log(result) )
     .catch(error => console.error("Error in main:", error));
