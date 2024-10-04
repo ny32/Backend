@@ -121,20 +121,20 @@ async function getCheapestPrice(object, hitlist) {
                     const storeQuantity = math.unit(working.unit[0], working.unit[1]).toNumber(object[key].requestedUnit);
                     
                     // Calculate price per requested unit
-                    const pricePerUnit = working.price / storeQuantity;
                     
                     // Calculate how many store units are needed
                     const unitsNeeded = Math.ceil(object[key].requestedQuantity / storeQuantity);
                     
                     // Calculate total price
-                    const totalPrice = unitsNeeded * working.price;
+                    const totalPrice = Number((unitsNeeded * working.price).toFixed(2));
+                    
                     if (object[key].fromAlgo.price === null || totalPrice < object[key].fromAlgo.price) {
                         object[key].fromAlgo = {
                             price: totalPrice,
                             quantity: unitsNeeded,
                             Grocery_Store: currentStore,
                             unit: working.unit,
-                            pricePerUnit: pricePerUnit
+                            pricePerUnit: working.price
                         };
 
                         // object[key].fromAlgo.Gunit will return an array, it just is not shown in VScode because of its array depth settings, not sure how to fix
