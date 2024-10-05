@@ -18,5 +18,5 @@ const getCoordinates = (zipCode, city) => {
 // Example usage
 // zipCode = '90210';
 // city = 'Beverly Hills, USA';
-
+getCoordinates('90210', 'Beverly Hills, USA').then(result => console.log(result)).catch(error => console.log(error))
 module.exports = { getCoordinates }
