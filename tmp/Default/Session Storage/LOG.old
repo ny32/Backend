@@ -1,3 +1,6 @@
-2024/10/04-16:11:51.836 175c4 Reusing MANIFEST C:\Users\Nish\Documents\Coding\Comp\Backend\Backend\tmp\Default\Session Storage/MANIFEST-000001
-2024/10/04-16:11:51.837 175c4 Recovering log #47
-2024/10/04-16:11:51.846 175c4 Reusing old log C:\Users\Nish\Documents\Coding\Comp\Backend\Backend\tmp\Default\Session Storage/000047.log 
+2024/10/05-12:35:16.140 3190 Reusing MANIFEST C:\Users\Nish\Desktop\Code\comp\Web-Scraping\tmp\Default\Session Storage/MANIFEST-000001
+2024/10/05-12:35:16.141 3190 Recovering log #7
+2024/10/05-12:35:16.145 3190 Reusing old log C:\Users\Nish\Desktop\Code\comp\Web-Scraping\tmp\Default\Session Storage/000007.log 
+2024/10/05-12:35:20.900 9bac Level-0 table #11: started
+2024/10/05-12:35:20.905 9bac Level-0 table #11: 13402 bytes OK
+2024/10/05-12:35:20.907 9bac Delete type=0 #7

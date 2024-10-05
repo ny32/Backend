@@ -16,11 +16,11 @@
     const StealthPlugin = require('puppeteer-extra-plugin-stealth');
     let returnData;
 
-    async function webscraper(store, query, searchlimit) {
+    async function webscraper(store, query, searchlimit, location) {
         let parent_container, product_price, product_name, product_quantity, product_image, url;
         // Configure the scraper based on the store
         switch (store) {
-            case "Lidl":
+            case "lidl":
                 parent_container = ".product-card";
                 product_price = ".product-price-new__price";
                 product_name = ".product-card__title";
@@ -28,7 +28,7 @@
                 product_image = ".product-card__image > img";
                 url = "https://www.lidl.com/search/products/";
                 break;
-            case "Aldi":
+            case "aldi":
                 parent_container = ".product-grid__item";
                 product_price = ".base-price__regular > span";
                 product_name = ".product-tile__name > p";
@@ -44,20 +44,30 @@
             //     product_image = ".css-15zffbe";
             //     url = "https://shop.wegmans.com/search?search_term=";
             //     break;
-            case "Safeway":
-                parent_container = ".product-card-container";
-                product_price = ".product-price__saleprice";
-                product_name = ".product-title__name";
-                product_quantity = ".product-title__qty > .sr-only";
-                product_image = ".product-card-container__product-image";
-                url = "https://www.safeway.com/shop/search-results.html?q=";
-                break;
+            // Geolocation doesn't change
+        //     case "safeway":
+        //         parent_container = ".product-card-container";
+        //         product_price = ".product-price__saleprice";
+        //         product_name = ".product-title__name";
+        //         product_quantity = ".product-title__qty > .sr-only";
+        //         product_image = ".product-card-container__product-image";
+        //         url = "https://www.safeway.com/shop/search-results.html?q=";
+        //         break;
         };
 
         puppeteer.use(StealthPlugin());
         const browser = await puppeteer.launch({ userDataDir: "./tmp" });
         try {
             const page = await browser.newPage();
+            //Location settings
+            await page.setGeolocation({
+                latitude: location[0],
+                longitude: location[1],
+                accuracy: 100,
+            });
+            const context = browser.defaultBrowserContext();
+            await context.overridePermissions(url, ['geolocation']);
+
             await page.setExtraHTTPHeaders({
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
                 'Accept-Language': 'en-US,en;q=0.9'

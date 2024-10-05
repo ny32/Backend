@@ -3,7 +3,6 @@ const { webscraper } = require('./Web_Scraper');
 //Math - Capable of using unit conversions
 const math = require('mathjs');
 const fs = require('fs').promises;
-const itemsNotFound = {};
 
 
 // Sign up for Google Maps API(to factor in transportation costs)
@@ -38,51 +37,7 @@ Set Baseline store as Aldi's
 */
 
 // Grocery list with items
-const grocerylist = {
-    1: {
-        name: "Apple",
-        requestedUnit: "kg",
-        requestedQuantity: 4,
-        //Everything here is algorithm adds
-        fromAlgo: {
-            price: null,
-        },
-    },
-    2: {
-        name: "Rice",
-        requestedUnit: "lb",
-        requestedQuantity: 2,
-        //Everything here is algorithm adds
-        fromAlgo: {
-            price: null,
-        },
-    },
-    // 3: {
-    //     name: "Paper Towel",
-    //     quantity: 12,
-    //     unit: "Roll"
-    // },
-    // 4: {
-    //     name: "Carrots",
-    //     quantity: 1,
-    //     unit: "Bag"
-    // },
-    // 5: {
-    //     name: "Chicken",
-    //     quantity: 1,
-    //     unit: "Whole",
-    // },
-    // 6: {
-    //     name: "Cheese Crackers",
-    //     quantity: 2,
-    //     unit: "Box",
-    // },
-    // 7: {
-    //     name: "Rice",
-    //     quantity: 5,
-    //     unit: "kg",
-    // }
-};
+
 
 /*
 1. First access the Grocerylist 
@@ -92,7 +47,7 @@ const grocerylist = {
 */
 
 // Recursive function to find the cheapest price
-async function getCheapestPrice(object, hitlist) {
+async function getCheapestPrice(object, hitlist, location) {
     
     if (hitlist.length !== 0) {
         const currentStore = hitlist[0];
@@ -110,7 +65,7 @@ async function getCheapestPrice(object, hitlist) {
             if (!found) {
                 // Fix this logic next
                 console.log(object[key].name + " not found in " + currentStore + " database");
-                const a = await webscraper(currentStore, object[key].name, 1);
+                const a = await webscraper(currentStore, object[key].name, 1, location);
                 working = a;
                 
             }
@@ -133,7 +88,8 @@ async function getCheapestPrice(object, hitlist) {
                         quantity: unitsNeeded,
                         Grocery_Store: currentStore,
                         unit: working.unit,
-                        pricePerUnit: working.price
+                        pricePerUnit: working.price,
+                        productName: working.name,
                     };
         
                     // object[key].fromAlgo.Gunit will return an array, it just is not shown in VScode because of its array depth settings, not sure how to fix
@@ -146,26 +102,28 @@ async function getCheapestPrice(object, hitlist) {
                 
                     
         } 
-        return getCheapestPrice(object, hitlist.slice(1));
+        return getCheapestPrice(object, hitlist.slice(1), location);
     } else {
         return object;
     }
 }
 
-async function main(grocerylist, baseline) {
-    const hitlist = Object.keys(firestoreStructure.GroceryStores);
+async function sort(grocerylist, baseline, stores, location) {
+    const hitlist = stores;
+    for (x of hitlist) {
+        if (!Object.keys(firestoreStructure.GroceryStores).includes(x)) {
+            hitlist.splice(hitlist.indexOf(x), 1);
+        }
+    }
     const localobj = grocerylist;
     const baselineIndex = hitlist.indexOf(baseline);
     if (baselineIndex !== -1) {
         hitlist.unshift(hitlist.splice(baselineIndex, 1)[0]);
     }
     // These few lines of code above will locate aldis, and then move it to the front(the if condition just checks if it exists, indexof will return -1 if it doesn't exist)
-
-    return await getCheapestPrice(localobj, hitlist);
+    return await getCheapestPrice(localobj, hitlist, location);
 }
 
 
-// Execute the main function
-main(grocerylist, "Aldi", 1)
-    .then(result => console.log(result) )
-    .catch(error => console.error("Error in main:", error));
+// Execute the sort function
+module.exports = { sort };
