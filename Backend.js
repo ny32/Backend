@@ -103,7 +103,7 @@ async function getCheapestPrice(object, hitlist) {
             for (let x in FirebaseRef) {     
                 if ((FirebaseRef[x].name.toLowerCase()).includes(object[key].name.toLowerCase())) {
                     found = true;
-                    working=FirebaseRef[x];
+                    working = FirebaseRef[x];
                     break;
                 }
             } 
@@ -111,7 +111,7 @@ async function getCheapestPrice(object, hitlist) {
                 // Fix this logic next
                 console.log(object[key].name + " not found in " + currentStore + " database");
                 const a = await webscraper(currentStore, object[key].name, 1);
-                working=a;
+                working = a;
                 
             }
             //Comparison logic below 
