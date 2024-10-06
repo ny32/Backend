@@ -1,13 +1,12 @@
 const { webscraper } = require('./webScraperFunction');
 const math = require('mathjs');
 const { admin, db } = require('./firebase');
-const algoliasearch = require('algoliasearch/lite');
+const { algoliasearch } = require("algoliasearch");
 
 const appID = "2D3UN0TEDQ";
 const apiKey = "48bbb2ad7f6510ef09dda5a5b1bc3ffd";
-const indexName = "aldi_products";
 
-const client = algoliasearch(appID, apiKey);
+searchClient = algoliasearch(appID, apiKey);
 
 // Sign up for Google Maps API(to factor in transportation costs)
 //console.log(firestoreStructure.GroceryStores.Lidl.Products.product1);
@@ -59,27 +58,27 @@ async function getCheapestPrice(object, hitlist, location) {
 
         for (let key in object) {
             let found = false;
-            // Execute a case-insensitive search for documents where the 'name' field 
-            // starts with the value of 'object[key].name'.
             const searchTerm = (object[key].name).toLowerCase();
         
             try {
-                const { hits } = await index.search(searchTerm);
-                console.log(hits);
-            } catch (error) {
-                console.error('Error searching products:', error);
-                return [];
-            }
+                const querySnapshot = await FirebaseRef.where('name', 'array-contains', searchTerm).get();
+                console.log(querySnapshot);
+                
+                if (!querySnapshot.empty) {
+                    found = true;
+                    // If there are matching documents
+                    querySnapshot.forEach(doc => {
+                        console.log(`Found: ${doc.id} =>`, doc.data());
+                    });
+                } else {
+                    console.log(`${searchTerm} not found in the database.`);
+                }
 
-            if (!querySnapshot.empty) {
-                found = true;
-                working = querySnapshot.docs[0].data();
-            } else {
-                console.log(object[key].name + " not found in " + currentStore + " database");
-                working = await webscraper(currentStore, object[key].name, 1, location);
-            }
+                if (!found) {
+                    console.log(object[key].name + " not found in " + currentStore + " database");
+                    working = await webscraper(currentStore, object[key].name, 1, location);
+                }
 
-            try {
                 // Convert store quantity to requested unit
                 const storeQuantity = math.unit(working.unit[0], working.unit[1]).toNumber(object[key].requestedUnit);
                 
@@ -99,10 +98,12 @@ async function getCheapestPrice(object, hitlist, location) {
                         productName: working.name,
                     };
                 }
+
             } catch (error) {
                 console.log(`Error processing ${object[key].name} from ${currentStore}: ${error.message}`);
             }
         } 
+
         return getCheapestPrice(object, hitlist.slice(1), location);
     } else {
         return object;

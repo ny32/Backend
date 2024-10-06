@@ -111,11 +111,13 @@ async function webscraper(store, query, searchlimit, location) {
             const docRef = db.collection('GroceryStores').doc(store).collection('Products').doc(uniqueKey);
             const doc = await docRef.get();
             
+            nameArray = name.split(' ');
+
             if (!doc.exists) {
                 // Save product data to Firestore
                 await docRef.set({
                     price,
-                    name,
+                    nameArray,
                     unit: quantity,
                     image
                 });
