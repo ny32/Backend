@@ -102,6 +102,7 @@
 
                 const price = cleanup(rawPrice, rawQuantity)[0];
                 const quantity = cleanup(rawPrice, rawQuantity)[1];
+                const FirebaseName = name.split(/\s+/);
 
                 // Define a unique key for the product
                 const uniqueKey = name.toLowerCase().trim().replace(/\s+/g, '_');
@@ -112,7 +113,7 @@
 
                 // Check if product already exists before adding
                 if (!data["GroceryStores"][store]["Products"][uniqueKey]) {
-                    data["GroceryStores"][store]["Products"][uniqueKey] = { price, name, unit: quantity, image };
+                    data["GroceryStores"][store]["Products"][uniqueKey] = { price, name, FirebaseName, unit: quantity, image };
                     searchdepth++;
                     returnData = data["GroceryStores"][store]["Products"][uniqueKey];
                 } else {
