@@ -63,13 +63,14 @@ async function main(grocerylist, location, radius) {
     const coordinates = await getCoordinates(location);
     const stores = await findNearbyGroceryStores(coordinates.lat, coordinates.lng, radius, 10);
     const myarray = [];
-    //Find nearby grocery stores to geocoded location
+    // Find nearby grocery stores to geocoded location
     for (x of preferableStores) {
         let b = stores.find(store => (store.name).toLowerCase() === x)
         if (b != undefined) {
             myarray.push((b.name).toLowerCase());
         }
     }
+    console.log(myarray)
     const FormattedLocation = [
         coordinates.lat,
         coordinates.lng
@@ -79,5 +80,5 @@ async function main(grocerylist, location, radius) {
         .catch(error => console.error("Error in main:", error));
 };
 
-main(grocerylist, "20872, Damascus, Maryland", 10000).then(result => console.log(result));
+main(grocerylist, "%20Damascus,%20Maryland,%2020872", 10000).then(result => console.log(result));
 //10Km  

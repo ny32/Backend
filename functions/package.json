@@ -19,6 +19,8 @@
     "firebase-functions": "^5.1.1",
     "mathjs": "^13.2.0",
     "node-fetch": "^3.3.2",
+    "nodejs": "^0.0.0",
+    "pupeteer": "^0.0.1",
     "puppeteer": "^23.5.0",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2"

@@ -78,24 +78,34 @@ function cleanup(iprice, iunit) {
         price = parseFloat(price) / 100;
     }
     // Price Handling
-
- 
     if (iunit.includes("$") || iunit.includes("¢")) {
         let b = findUnit(iunit);
-        if ( (b.slice(b.indexOf("_") ) === "_d")) {
+        if ((b.slice(b.indexOf("_")) === "_d")) {
             iunit = iunit.replace(b.replace("_d", ""), " ");             
         }
         prepushindex = iunit.indexOf(b);
-        if (iunit.charAt(prepushindex - 1) === "/") {
-           // Qty Possibilites - 1 each (49¢ /lb) & 1 each, 49¢ /lb & 1 each, 49¢/lb
-           // Qty Possibilites - 1 each ($2.49/lb) & 1 each, $2.49 /lb), $1.99/lb
-            ministring = iunit.substring(prepushindex -8, prepushindex);
+        
+        // Handle cases like "12 oz ($0.50/oz)"
+        if (iunit.includes("(") && iunit.includes(")")) {
+            let [quantity, unitPrice] = iunit.split("(");
+            quantity = findNums(quantity);
+            unitPrice = findNums(unitPrice);
+            if (iunit.includes("¢")) {
+                unitPrice = unitPrice / 100;
+            }
+            unit.push(quantity, findUnit(iunit));
+        } 
+        // Handle existing cases
+        else if (iunit.charAt(prepushindex - 1) === "/") {
+            // Qty Possibilites - 1 each (49¢ /lb) & 1 each, 49¢ /lb & 1 each, 49¢/lb
+            // Qty Possibilites - 1 each ($2.49/lb) & 1 each, $2.49 /lb), $1.99/lb
+            ministring = iunit.substring(prepushindex - 8, prepushindex);
             if (iunit.includes("¢")) {
                 cV = findNums(ministring) / 100;
             } else {
                 cV = findNums(ministring);
             }
-            unit.push( parseFloat((price / cV).toFixed(3)), findUnit(iunit) );
+            unit.push(parseFloat((price / cV).toFixed(3)), findUnit(iunit));
             
         } else {
             // Qty Possiblilites - 1.99 $ per oz & ($0.34 per oz);
@@ -104,13 +114,14 @@ function cleanup(iprice, iunit) {
             } else {
                 cV = findNums(iunit);
             }
-            unit.push( parseFloat((price / cV).toFixed(3)), findUnit(iunit) );
+            unit.push(parseFloat((price / cV).toFixed(3)), findUnit(iunit));
         }
     } else {
         let prepushindex = iunit.indexOf(findUnit(iunit));
         if (iunit.charAt(prepushindex - 1) === "/") {
             // Qty Possibilites - 1.99/lb - Assumption that it is a dollar
             unit.push(parseFloat((price / findNums(iunit)).toFixed(3)), findUnit(iunit));
+            
 
         } else {
             // Qty Possibilites - 28 oz & /28 oz

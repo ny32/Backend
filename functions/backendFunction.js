@@ -88,7 +88,7 @@ async function getCheapestPrice(object, hitlist, location) {
                         Grocery_Store: currentStore,
                         unit: working.unit,
                         pricePerUnit: working.price,
-                        productName: working.formattedName,
+                        productName: working.name,
                     };
                 }
 

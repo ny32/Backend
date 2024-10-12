@@ -12,12 +12,13 @@ case "Harris_Teeter":
 const { cleanup } = require('./cleanUpFunction.js');
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
-const { admin, db } = require('./firebase');
+// const { admin, db } = require('./firebase');
 
 let returnData;
 
 async function webscraper(store, query, searchlimit, location) {
-    let parent_container, product_price, product_name, product_quantity, product_image, url;
+    let parent_container, product_price, product_name, product_quantity, product_image, url, filter;
+    let special = false;
     
     // Configure the scraper based on the store
     switch (store) {
@@ -28,6 +29,7 @@ async function webscraper(store, query, searchlimit, location) {
             product_quantity = ".product-card__subtext";
             product_image = ".product-card__image > img";
             url = "https://www.lidl.com/search/products/";
+            filter = "";
             break;
         case "aldi":
             parent_container = ".product-grid__item";
@@ -36,28 +38,30 @@ async function webscraper(store, query, searchlimit, location) {
             product_quantity = ".product-tile__unit-of-measurement > p";
             product_image = ".product-tile__picture > img";
             url = "https://new.aldi.us/results?q=";
+            filter = "&sort=price_asc";
             break;
-        // case "Wegmans":
-        //     parent_container = ".css-yxhcyb";
-        //     product_price = ".css-zqx11d";
-        //     product_name = ".css-131yigi";
-        //     product_quantity = ".css-1kh7mkb";
-        //     product_image = ".css-15zffbe";
-        //     url = "https://shop.wegmans.com/search?search_term=";
-        //     break;
-        // Geolocation doesn't change
-        //     case "safeway":
-        //         parent_container = ".product-card-container";
-        //         product_price = ".product-price__saleprice";
-        //         product_name = ".product-title__name";
-        //         product_quantity = ".product-title__qty > .sr-only";
-        //         product_image = ".product-card-container__product-image";
-        //         url = "https://www.safeway.com/shop/search-results.html?q=";
-        //         break;
+        case "wegmans":
+            parent_container = ".css-yxhcyb";
+            product_price = ".css-zqx11d";
+            product_name = ".css-131yigi";
+            product_quantity = ".css-1kh7mkb";
+            product_image = ".css-15zffbe";
+            url = "https://shop.wegmans.com/search?search_term=";
+            special = true;
+            filter = "";
+            break;
+        case "safeway":
+            parent_container = ".product-card-container";
+            product_price = ".product-price__saleprice";
+            product_name = ".product-title__name";
+            product_quantity = ".product-title__qty > .sr-only";
+            product_image = ".product-card-container__product-image";
+            url = "https://www.safeway.com/shop/search-results.html?q=";
+            break;
     }
 
     puppeteer.use(StealthPlugin());
-    const browser = await puppeteer.launch({ userDataDir: "./tmp" });
+    const browser = await puppeteer.launch({ headless: false, userDataDir: "./tmp" });
     try {
         const page = await browser.newPage();
         //Location settings
@@ -73,13 +77,25 @@ async function webscraper(store, query, searchlimit, location) {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
             'Accept-Language': 'en-US,en;q=0.9'
         });
-        await page.goto(url + query);
-        await page.waitForSelector(parent_container, { timeout: 30000 });
+        await page.goto(url + query + filter);
+        try { await page.waitForSelector(parent_container, { timeout: 10000 }); } 
+        catch (error) { 
+            switch(store) {
+                case "wegmans": 
+                    await page.locator('button#shopping-selector-parent-process-modal-close-click').click();
+                    await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 3000)));
+                    await page.locator('.css-7v13l2').click();
+                    break;
+            }
+        }
 
+        await page.waitForSelector(parent_container, { timeout: 3000 });
         const searchthru = await page.$$(parent_container);
         let searchdepth = 0;
         
         for (const x of searchthru) {
+            
+            // This currently doesn't work
             if (searchdepth >= searchlimit) {
                 break; // Break if we've reached the search limit
             }
@@ -100,7 +116,7 @@ async function webscraper(store, query, searchlimit, location) {
                 const d = el.querySelector(product_image);
                 return d ? d.getAttribute('src') : null;
             }, product_image);
-
+            console.log(rawQuantity)
             const price = cleanup(rawPrice, rawQuantity)[0];
             const quantity = cleanup(rawPrice, rawQuantity)[1];
 
@@ -108,25 +124,26 @@ async function webscraper(store, query, searchlimit, location) {
             const uniqueKey = name.toLowerCase().trim().replace(/\s+/g, '_');
 
             // Check if product already exists before adding
-            const docRef = db.collection('GroceryStores').doc(store).collection('Products').doc(uniqueKey);
-            const doc = await docRef.get();
+            // const docRef = db.collection('GroceryStores').doc(store).collection('Products').doc(uniqueKey);
+            // const doc = await docRef.get();
             
             let formattedName = name.replace(/[^\w\s]/g, '').split(/\s+/);
 
-            if (!doc.exists) {
-                // Save product data to Firestore
-                await docRef.set({
-                    price,
-                    formattedName,
-                    unit: quantity,
-                    image
-                });
+            // if (!doc.exists) {
+            //     // Save product data to Firestore
+            //     await docRef.set({
+            //         price,
+            //         formattedName,
+            //         name,
+            //         unit: quantity,
+            //         image
+            //     });
                 searchdepth++;
                 returnData = { price, name, unit: quantity, image };
-            } else {
-                console.log(`Duplicate found for ${name} in ${store} database. Skipping...`);
-                break;
-            }
+            // } else {
+            //     console.log(`Duplicate found for ${name} in ${store} database. Skipping...`);
+            //     break;
+            // }
         }
 
         // Optionally return the scraped data
@@ -134,8 +151,14 @@ async function webscraper(store, query, searchlimit, location) {
     } catch (error) {
         console.error("Error during web scraping:", error);
     } finally {
-        await browser.close();
+      await browser.close();
     }
 }
+
+const FormattedLocation = [
+    39.286381,
+    -77.201912
+]
+// webscraper("wegmans", "Tomato", 1, FormattedLocation).then(result => console.log(result)).catch(error => console.log(error))
 
 module.exports = { webscraper };
