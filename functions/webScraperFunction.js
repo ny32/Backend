@@ -78,7 +78,7 @@ async function webscraper(store, query, searchlimit, location) {
 
         const searchthru = await page.$$(parent_container);
         let searchdepth = 0;
-
+        
         for (const x of searchthru) {
             if (searchdepth >= searchlimit) {
                 break; // Break if we've reached the search limit
@@ -111,13 +111,13 @@ async function webscraper(store, query, searchlimit, location) {
             const docRef = db.collection('GroceryStores').doc(store).collection('Products').doc(uniqueKey);
             const doc = await docRef.get();
             
-            nameArray = name.split(' ');
+            let formattedName = name.replace(/[^\w\s]/g, '').split(/\s+/);
 
             if (!doc.exists) {
                 // Save product data to Firestore
                 await docRef.set({
                     price,
-                    nameArray,
+                    formattedName,
                     unit: quantity,
                     image
                 });

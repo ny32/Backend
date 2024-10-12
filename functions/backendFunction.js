@@ -1,12 +1,7 @@
 const { webscraper } = require('./webScraperFunction');
 const math = require('mathjs');
 const { admin, db } = require('./firebase');
-const { algoliasearch } = require("algoliasearch");
-
-const appID = "2D3UN0TEDQ";
-const apiKey = "48bbb2ad7f6510ef09dda5a5b1bc3ffd";
-
-searchClient = algoliasearch(appID, apiKey);
+const { DocumentSnapshot } = require('firebase-admin/firestore');
 
 // Sign up for Google Maps API(to factor in transportation costs)
 //console.log(firestoreStructure.GroceryStores.Lidl.Products.product1);
@@ -54,24 +49,22 @@ async function getCheapestPrice(object, hitlist, location) {
     if (hitlist.length !== 0) {
         const currentStore = hitlist[0];
         let working;
-        const FirebaseRef = db.collection('GroceryStores').doc(currentStore).collection('Products');
+        const firebaseRef = db.collection('GroceryStores').doc(currentStore).collection('Products');
 
         for (let key in object) {
             let found = false;
-            const searchTerm = (object[key].name).toLowerCase();
+            const searchTerm = ((object[key].name).toLowerCase()).split(' ');
         
             try {
-                const querySnapshot = await FirebaseRef.where('name', 'array-contains', searchTerm).get();
-                console.log(querySnapshot);
+                const querySnapshot = await firebaseRef.where('formattedName', 'array-contains-any', searchTerm).get();
                 
                 if (!querySnapshot.empty) {
                     found = true;
                     // If there are matching documents
                     querySnapshot.forEach(doc => {
                         console.log(`Found: ${doc.id} =>`, doc.data());
+                        working = doc.data();
                     });
-                } else {
-                    console.log(`${searchTerm} not found in the database.`);
                 }
 
                 if (!found) {
@@ -95,7 +88,7 @@ async function getCheapestPrice(object, hitlist, location) {
                         Grocery_Store: currentStore,
                         unit: working.unit,
                         pricePerUnit: working.price,
-                        productName: working.name,
+                        productName: working.formattedName,
                     };
                 }
 
