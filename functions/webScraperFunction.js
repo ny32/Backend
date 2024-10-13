@@ -10,15 +10,21 @@ case "Harris_Teeter":
     break;
 */
 const { cleanup } = require('./cleanUpFunction.js');
-const puppeteer = require('puppeteer-extra');
+
+
+const puppeteer = require('puppeteer-core');
+// const puppeteer = require('puppeteer');
+const { addExtra } = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
-// const { admin, db } = require('./firebase');
+const chromium = require('@sparticuz/chromium');
+
+
+const { admin, db } = require('./firebase');
 
 let returnData;
 
 async function webscraper(store, query, searchlimit, location) {
     let parent_container, product_price, product_name, product_quantity, product_image, url, filter;
-    let special = false;
     
     // Configure the scraper based on the store
     switch (store) {
@@ -38,7 +44,7 @@ async function webscraper(store, query, searchlimit, location) {
             product_quantity = ".product-tile__unit-of-measurement > p";
             product_image = ".product-tile__picture > img";
             url = "https://new.aldi.us/results?q=";
-            filter = "&sort=price_asc";
+            filter = "";
             break;
         case "wegmans":
             parent_container = ".css-yxhcyb";
@@ -47,21 +53,27 @@ async function webscraper(store, query, searchlimit, location) {
             product_quantity = ".css-1kh7mkb";
             product_image = ".css-15zffbe";
             url = "https://shop.wegmans.com/search?search_term=";
-            special = true;
             filter = "";
             break;
-        case "safeway":
-            parent_container = ".product-card-container";
-            product_price = ".product-price__saleprice";
-            product_name = ".product-title__name";
-            product_quantity = ".product-title__qty > .sr-only";
-            product_image = ".product-card-container__product-image";
-            url = "https://www.safeway.com/shop/search-results.html?q=";
-            break;
+        // case "safeway":
+        //     parent_container = ".product-card-container";
+        //     product_price = ".product-price__saleprice";
+        //     product_name = ".product-title__name";
+        //     product_quantity = ".product-title__qty > .sr-only";
+        //     product_image = ".product-card-container__product-image";
+        //     url = "https://www.safeway.com/shop/search-results.html?q=";
+        //     filter = "";
+        //     break;
     }
-
-    puppeteer.use(StealthPlugin());
-    const browser = await puppeteer.launch({ headless: false, userDataDir: "./tmp" });
+    const puppeteerExtra = addExtra(puppeteer);
+    puppeteerExtra.use(StealthPlugin());
+    const browser = await puppeteerExtra.launch({
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath(),
+        headless: chromium.headless,
+        ignoreHTTPSErrors: true,
+    });
     try {
         const page = await browser.newPage();
         //Location settings
@@ -82,14 +94,16 @@ async function webscraper(store, query, searchlimit, location) {
         catch (error) { 
             switch(store) {
                 case "wegmans": 
-                    await page.locator('button#shopping-selector-parent-process-modal-close-click').click();
+                    const button = await page.waitForSelector('button#shopping-selector-parent-process-modal-close-click');
+                    await button.click();
                     await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 3000)));
-                    await page.locator('.css-7v13l2').click();
+                    const refreshbutton = await page.waitForSelector('.css-7v13l2');
+                    await refreshbutton.click();
                     break;
             }
         }
 
-        await page.waitForSelector(parent_container, { timeout: 3000 });
+        await page.waitForSelector(parent_container, { timeout: 10000 });
         const searchthru = await page.$$(parent_container);
         let searchdepth = 0;
         
@@ -124,26 +138,26 @@ async function webscraper(store, query, searchlimit, location) {
             const uniqueKey = name.toLowerCase().trim().replace(/\s+/g, '_');
 
             // Check if product already exists before adding
-            // const docRef = db.collection('GroceryStores').doc(store).collection('Products').doc(uniqueKey);
-            // const doc = await docRef.get();
+            const docRef = db.collection('GroceryStores').doc(store).collection('Products').doc(uniqueKey);
+            const doc = await docRef.get();
             
             let formattedName = name.replace(/[^\w\s]/g, '').split(/\s+/);
 
-            // if (!doc.exists) {
-            //     // Save product data to Firestore
-            //     await docRef.set({
-            //         price,
-            //         formattedName,
-            //         name,
-            //         unit: quantity,
-            //         image
-            //     });
+            if (!doc.exists) {
+                // Save product data to Firestore
+                await docRef.set({
+                    price,
+                    formattedName,
+                    name,
+                    unit: quantity,
+                    image
+                });
                 searchdepth++;
                 returnData = { price, name, unit: quantity, image };
-            // } else {
-            //     console.log(`Duplicate found for ${name} in ${store} database. Skipping...`);
-            //     break;
-            // }
+             } else {
+                 console.log(`Duplicate found for ${name} in ${store} database. Skipping...`);
+                 break;
+            }
         }
 
         // Optionally return the scraped data

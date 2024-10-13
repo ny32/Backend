@@ -11,8 +11,9 @@
   "engines": {
     "node": "20"
   },
-  "main": "index.js",
+  "main": "mainFunction.js",
   "dependencies": {
+    "@sparticuz/chromium": "^129.0.0",
     "algoliasearch": "^5.7.0",
     "firebase-admin": "^12.6.0",
     "firebase-backend": "^0.2.5",
@@ -22,6 +23,7 @@
     "nodejs": "^0.0.0",
     "pupeteer": "^0.0.1",
     "puppeteer": "^23.5.0",
+    "puppeteer-core": "^10.4.0",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2"
   },
