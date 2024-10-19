@@ -89,6 +89,7 @@ async function getCheapestPrice(object, hitlist, location) {
                         unit: working.unit,
                         pricePerUnit: working.price,
                         productName: working.name,
+                        imageUrl: working.imageUrl
                     };
                 }
 

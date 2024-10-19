@@ -13,9 +13,11 @@ const { cleanup } = require('./cleanUpFunction.js');
 
 
 const puppeteer = require('puppeteer-core');
+// Use this for emulators
 // const puppeteer = require('puppeteer');
 const { addExtra } = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+// Use this for cloud functions
 const chromium = require('@sparticuz/chromium');
 
 
@@ -90,7 +92,7 @@ async function webscraper(store, query, searchlimit, location) {
             'Accept-Language': 'en-US,en;q=0.9'
         });
         await page.goto(url + query + filter);
-        try { await page.waitForSelector(parent_container, { timeout: 10000 }); } 
+        try { await page.waitForSelector(parent_container, { timeout: 20000 }); } 
         catch (error) { 
             switch(store) {
                 case "wegmans": 
@@ -103,7 +105,7 @@ async function webscraper(store, query, searchlimit, location) {
             }
         }
 
-        await page.waitForSelector(parent_container, { timeout: 10000 });
+        await page.waitForSelector(parent_container, { timeout: 20000 });
         const searchthru = await page.$$(parent_container);
         let searchdepth = 0;
         
@@ -126,9 +128,13 @@ async function webscraper(store, query, searchlimit, location) {
                 const c = el.querySelector(product_quantity);
                 return c ? c.textContent.trim() : null;
             }, product_quantity);
-            const image = await x.evaluate((el, product_image) => {
+            const imageUrl = await x.evaluate((el, product_image) => {
                 const d = el.querySelector(product_image);
-                return d ? d.getAttribute('src') : null;
+                if (d) {
+                    const src = d.getAttribute('src');
+                    return new URL(src, window.location.origin).href;
+                }
+                return null;
             }, product_image);
             console.log(rawQuantity)
             const price = cleanup(rawPrice, rawQuantity)[0];
@@ -150,10 +156,10 @@ async function webscraper(store, query, searchlimit, location) {
                     formattedName,
                     name,
                     unit: quantity,
-                    image
+                    imageUrl
                 });
                 searchdepth++;
-                returnData = { price, name, unit: quantity, image };
+                returnData = { price, name, unit: quantity, imageUrl };
              } else {
                  console.log(`Duplicate found for ${name} in ${store} database. Skipping...`);
                  break;
